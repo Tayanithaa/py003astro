@@ -1,0 +1,803 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- Hero Section - Enhanced with Particles -->
+<section class="hero">
+  <div class="particles" id="particles"></div>
+
+  <div class="hero-container">
+    <div class="hero-badge">
+      <span>✦</span>
+      <span>{% if language == 'ta' %}நேர்மையான வேத ஜோதிடம்{% else %}Authentic Vedic Astrology{% endif %}</span>
+    </div>
+
+    <h1 class="hero-heading">
+      {% if language == 'ta' %}
+      உங்கள் விண்வெளி பயணம்<br>இங்கே தொடங்குகிறது
+      {% else %}
+      Your Journey Through<br>the Cosmos Begins Here
+      {% endif %}
+    </h1>
+
+    <p class="hero-text">
+      {% if language == 'ta' %}
+      பழமையான ஞானம், நவீன நுண்ணறிவு
+      {% else %}
+      Ancient wisdom, modern intelligence
+      {% endif %}
+    </p>
+
+    <div class="hero-trust">
+      <span class="trust-badge">✨ 10,000+ {% if language == 'ta' %}பயனர்கள்{% else %}Seekers{% endif %}</span>
+      <span class="trust-separator">•</span>
+      <span class="trust-badge">📊 50,000+ {% if language == 'ta' %}ஜாதகங்கள்{% else %}Charts{% endif %}</span>
+    </div>
+  </div>
+</section>
+
+<!-- How It Works -->
+<section class="how-it-works">
+  <h2 class="section-title">
+    {% if language == 'ta' %}இது எவ்வாறு செயல்படுகிறது{% else %}How It Works{% endif %}
+  </h2>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-number">1</div>
+      <div class="step-icon">📝</div>
+      <h3 class="step-title">{% if language == 'ta' %}உள்ளிடுக{% else %}Enter Details{% endif %}</h3>
+      <p class="step-text">
+        {% if language == 'ta' %}
+        உங்கள் பிறப்பு தேதி, நேரம் மற்றும் இடம்
+        {% else %}
+        Your birth date, time, and place
+        {% endif %}
+      </p>
+    </div>
+
+    <div class="step">
+      <div class="step-number">2</div>
+      <div class="step-icon">🤖</div>
+      <h3 class="step-title">{% if language == 'ta' %}AI பகுப்பாய்வு{% else %}AI Analysis{% endif %}</h3>
+      <p class="step-text">
+        {% if language == 'ta' %}
+        வேத கணக்கீடுகள் & ML நுண்ணறிவு
+        {% else %}
+        Vedic calculations & ML insights
+        {% endif %}
+      </p>
+    </div>
+
+    <div class="step">
+      <div class="step-number">3</div>
+      <div class="step-icon">🌟</div>
+      <h3 class="step-title">{% if language == 'ta' %}கண்டுபிடியுங்கள்{% else %}Discover{% endif %}</h3>
+      <p class="step-text">
+        {% if language == 'ta' %}
+        உங்கள் பாதை & விதியை வெளிப்படுத்துங்கள்
+        {% else %}
+        Unlock your path & destiny
+        {% endif %}
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Quick Explore Section -->
+<section class="quick-explore">
+  <h2 class="section-title">
+    {% if language == 'ta' %}இப்போதே ஆராயுங்கள்{% else %}Explore Without Waiting{% endif %}
+  </h2>
+  <p class="section-subtitle">
+    {% if language == 'ta' %}
+    பதிவு இல்லாமல் எங்கள் அம்சங்களை முயற்சிக்கவும்
+    {% else %}
+    Try our features without signing up
+    {% endif %}
+  </p>
+
+  <div class="explore-grid">
+    <a href="/panchangam" class="explore-card">
+      <div class="explore-icon">📅</div>
+      <h3 class="explore-title">{% if language == 'ta' %}இன்றைய பஞ்சாங்கம்{% else %}Today's Panchangam{% endif %}</h3>
+      <p class="explore-desc">{% if language == 'ta' %}புனித நேரங்கள் பார்க்கவும்{% else %}View auspicious timings{%
+        endif %}</p>
+    </a>
+
+    <a href="/horoscope" class="explore-card">
+      <div class="explore-icon">🌙</div>
+      <h3 class="explore-title">{% if language == 'ta' %}ராசி வழிகாட்டி{% else %}Rasi Guide{% endif %}</h3>
+      <p class="explore-desc">{% if language == 'ta' %}அனைத்து ராசிகளையும் அறியுங்கள்{% else %}Learn about all Rasis{%
+        endif %}</p>
+    </a>
+
+    <a href="/chat" class="explore-card">
+      <div class="explore-icon">🤖</div>
+      <h3 class="explore-title">{% if language == 'ta' %}AI உடன் பேசுங்கள்{% else %}Chat with AI{% endif %}</h3>
+      <p class="explore-desc">{% if language == 'ta' %}இலவச ஜோதிட ஆலோசனை{% else %}Free astrology guidance{% endif %}</p>
+    </a>
+  </div>
+</section>
+
+<!-- Features - Enhanced -->
+<section class="features">
+  <div class="features-container">
+    <a href="/birthchart" class="feature">
+      <div class="feature-icon">🪐</div>
+      <h3 class="feature-title">{% if language == 'ta' %}பிறப்பு ஜாதகம்{% else %}Birth Chart{% endif %}</h3>
+      <p class="feature-text">
+        {% if language == 'ta' %}
+        விரிவான வேத பகுப்பாய்வு
+        {% else %}
+        Detailed Vedic analysis
+        {% endif %}
+      </p>
+      <span class="feature-arrow">→</span>
+    </a>
+
+    <a href="/compatibility" class="feature">
+      <div class="feature-icon">💕</div>
+      <h3 class="feature-title">{% if language == 'ta' %}பொருத்தம்{% else %}Compatibility{% endif %}</h3>
+      <p class="feature-text">
+        {% if language == 'ta' %}
+        அஷ்டகூட சோதனை
+        {% else %}
+        Ashtakoota matching
+        {% endif %}
+      </p>
+      <span class="feature-arrow">→</span>
+    </a>
+
+    <a href="/chat" class="feature">
+      <div class="feature-icon">🤖</div>
+      <h3 class="feature-title">{% if language == 'ta' %}AI உரையாடல்{% else %}AI Chat{% endif %}</h3>
+      <p class="feature-text">
+        {% if language == 'ta' %}
+        ML-இயங்கும் வழிகாட்டுதல்
+        {% else %}
+        ML-powered guidance
+        {% endif %}
+      </p>
+      <span class="feature-arrow">→</span>
+    </a>
+
+    <a href="/panchangam" class="feature">
+      <div class="feature-icon">📅</div>
+      <h3 class="feature-title">{% if language == 'ta' %}பஞ்சாங்கம்{% else %}Panchangam{% endif %}</h3>
+      <p class="feature-text">
+        {% if language == 'ta' %}
+        புனித நேரங்கள்
+        {% else %}
+        Sacred timings
+        {% endif %}
+      </p>
+      <span class="feature-arrow">→</span>
+    </a>
+  </div>
+</section>
+
+<!-- Form - Enhanced with Icons -->
+<section class="form-section">
+  <div class="form-wrapper">
+    <h2 class="form-heading">{{ translations.formTitle }}</h2>
+
+    <form id="chartForm" class="form">
+      <div class="form-row">
+        <div class="input-group">
+          <label>
+            <span class="input-icon">👤</span>
+            {{ translations.labelName }}
+          </label>
+          <input type="text" name="name" required placeholder="Your full name">
+        </div>
+
+        <div class="input-group">
+          <label>
+            <span class="input-icon">⚧</span>
+            {{ translations.labelGender }}
+          </label>
+          <select name="gender" required>
+            <option value="">Select</option>
+            <option value="Male">{% if language == 'ta' %}ஆண்{% else %}Male{% endif %}</option>
+            <option value="Female">{% if language == 'ta' %}பெண்{% else %}Female{% endif %}</option>
+            <option value="Other">{% if language == 'ta' %}பிற{% else %}Other{% endif %}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="input-group">
+          <label>
+            <span class="input-icon">📅</span>
+            {{ translations.labelDob }}
+          </label>
+          <input type="date" name="dob" required>
+        </div>
+
+        <div class="input-group">
+          <label>
+            <span class="input-icon">⏰</span>
+            {{ translations.labelTime }}
+          </label>
+          <input type="time" name="time" required>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label>
+          <span class="input-icon">📍</span>
+          {{ translations.labelPlace }}
+        </label>
+        <input type="text" name="place" required placeholder="Chennai, India">
+      </div>
+
+      <button type="submit" class="submit-btn">
+        <span>{{ translations.btnText }}</span>
+        <span class="btn-arrow">→</span>
+      </button>
+
+      <div class="loading" id="formLoading">
+        <div class="spinner"></div>
+        <p>{{ translations.loadingText }}</p>
+      </div>
+    </form>
+
+    <div class="trust-line">
+      <span>🔒 {% if language == 'ta' %}பாதுகாப்பான{% else %}Secure{% endif %}</span>
+      <span>•</span>
+      <span>⚡ {% if language == 'ta' %}உடனடி{% else %}Instant{% endif %}</span>
+      <span>•</span>
+      <span>🕉️ {% if language == 'ta' %}நேர்மையான{% else %}Authentic{% endif %}</span>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Reset & Base */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  /* Hero Section with Particles */
+  .hero {
+    padding: 8rem 2rem 6rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .particles {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .particles::before,
+  .particles::after {
+    content: '';
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: rgba(255, 215, 0, 0.3);
+    border-radius: 50%;
+    animation: floatParticle 20s linear infinite;
+  }
+
+  .particles::before {
+    top: 20%;
+    left: 10%;
+    animation-delay: -5s;
+  }
+
+  .particles::after {
+    top: 60%;
+    left: 80%;
+    animation-delay: -10s;
+  }
+
+  @keyframes floatParticle {
+
+    0%,
+    100% {
+      transform: translateY(0) scale(1);
+      opacity: 0;
+    }
+
+    10%,
+    90% {
+      opacity: 0.4;
+    }
+
+    50% {
+      transform: translateY(-50px) scale(1.2);
+    }
+  }
+
+  .hero-container {
+    max-width: 700px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: rgba(255, 215, 0, 0.8);
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+  }
+
+  .hero-heading {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
+    font-weight: 400;
+    color: #FFFFFF;
+    line-height: 1.3;
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.5px;
+  }
+
+  .hero-text {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 300;
+    letter-spacing: 0.5px;
+    margin-bottom: 2rem;
+  }
+
+  .hero-trust {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  .trust-separator {
+    opacity: 0.3;
+  }
+
+  /* How It Works */
+  .how-it-works {
+    padding: 5rem 2rem 3rem;
+    text-align: center;
+  }
+
+  .section-title {
+    font-family: 'Cinzel', serif;
+    font-size: 1.8rem;
+    font-weight: 400;
+    color: #FFD700;
+    margin-bottom: 1rem;
+  }
+
+  .section-subtitle {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.95rem;
+    margin-bottom: 3rem;
+  }
+
+  .steps {
+    max-width: 900px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 3rem;
+  }
+
+  .step {
+    position: relative;
+  }
+
+  .step-number {
+    position: absolute;
+    top: -10px;
+    right: 10px;
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 215, 0, 0.1);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cinzel', serif;
+    font-size: 0.9rem;
+    color: #FFD700;
+  }
+
+  .step-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+
+  .step-title {
+    font-family: 'Cinzel', serif;
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 0.5rem;
+  }
+
+  .step-text {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.5);
+    line-height: 1.6;
+  }
+
+  /* Quick Explore */
+  .quick-explore {
+    padding: 3rem 2rem 5rem;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .explore-grid {
+    max-width: 900px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .explore-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 2rem 1.5rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+
+  .explore-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(255, 215, 0, 0.3);
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .explore-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .explore-title {
+    font-family: 'Cinzel', serif;
+    font-size: 1rem;
+    color: #FFD700;
+    margin-bottom: 0.5rem;
+  }
+
+  .explore-desc {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  /* Features Section */
+  .features {
+    padding: 4rem 2rem;
+  }
+
+  .features-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 2rem;
+  }
+
+  .feature {
+    text-align: center;
+    padding: 2rem 1.5rem;
+    transition: transform 0.3s ease;
+    text-decoration: none;
+    display: block;
+    position: relative;
+  }
+
+  .feature:hover {
+    transform: translateY(-5px);
+  }
+
+  .feature-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    opacity: 0.9;
+  }
+
+  .feature-title {
+    font-family: 'Cinzel', serif;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #FFD700;
+    margin-bottom: 0.5rem;
+  }
+
+  .feature-text {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 300;
+    margin-bottom: 0.8rem;
+  }
+
+  .feature-arrow {
+    display: inline-block;
+    color: rgba(255, 215, 0, 0.6);
+    font-size: 1.2rem;
+    transition: transform 0.3s ease;
+  }
+
+  .feature:hover .feature-arrow {
+    transform: translateX(5px);
+  }
+
+  /* Form Section */
+  .form-section {
+    padding: 6rem 2rem;
+  }
+
+  .form-wrapper {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .form-heading {
+    font-family: 'Cinzel', serif;
+    font-size: 1.8rem;
+    font-weight: 400;
+    color: #FFD700;
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .input-group label {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .input-icon {
+    font-size: 1.1rem;
+  }
+
+  .input-group input,
+  .input-group select {
+    padding: 0.9rem 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: #FFFFFF;
+    font-size: 0.95rem;
+    font-family: inherit;
+    transition: all 0.3s ease;
+  }
+
+  /* FIX: Gender dropdown white text issue */
+  .input-group select {
+    color: #FFFFFF;
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .input-group select option {
+    background: #1a1a2e;
+    color: #FFFFFF;
+    padding: 0.5rem;
+  }
+
+  .input-group input:focus,
+  .input-group select:focus {
+    outline: none;
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 215, 0, 0.3);
+  }
+
+  .input-group input::placeholder {
+    color: rgba(255, 255, 255, 0.25);
+  }
+
+  .submit-btn {
+    padding: 1.1rem 2rem;
+    background: rgba(255, 215, 0, 0.1);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    border-radius: 8px;
+    color: #FFD700;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+  }
+
+  .submit-btn:hover {
+    background: rgba(255, 215, 0, 0.15);
+    border-color: #FFD700;
+  }
+
+  .btn-arrow {
+    transition: transform 0.3s ease;
+  }
+
+  .submit-btn:hover .btn-arrow {
+    transform: translateX(5px);
+  }
+
+  .loading {
+    display: none;
+    text-align: center;
+    padding: 2rem 0;
+  }
+
+  .loading.active {
+    display: block;
+  }
+
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255, 215, 0, 0.2);
+    border-top-color: #FFD700;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1rem;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .loading p {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.9rem;
+  }
+
+  .trust-line {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.85rem;
+  }
+
+  .trust-line span:nth-child(even) {
+    opacity: 0.3;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .hero {
+      padding: 6rem 1.5rem 4rem;
+    }
+
+    .form-row {
+      grid-template-columns: 1fr;
+    }
+
+    .features-container {
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    .steps {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    .explore-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .trust-line {
+      flex-wrap: wrap;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .features-container {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  // Simple particle generation
+  const particles = document.getElementById('particles');
+  for (let i = 0; i < 5; i++) {
+    const particle = document.createElement('div');
+    particle.style.cssText = `
+        position: absolute;
+        width: 2px;
+        height: 2px;
+        background: rgba(255,215,0,0.3);
+        border-radius: 50%;
+        top: ${Math.random() * 100}%;
+        left: ${Math.random() * 100}%;
+        animation: floatParticle ${15 + Math.random() * 10}s linear infinite;
+        animation-delay: -${Math.random() * 20}s;
+    `;
+    particles.appendChild(particle);
+  }
+
+  // Form submission - FIXED REDIRECT
+  document.getElementById('chartForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const formData = {
+      name: e.target.name.value,
+      dob: e.target.dob.value,
+      time: e.target.time.value,
+      place: e.target.place.value,
+      gender: e.target.gender.value
+    };
+
+    const loading = document.getElementById('formLoading');
+    const submitBtn = e.target.querySelector('.submit-btn');
+
+    submitBtn.style.display = 'none';
+    loading.classList.add('active');
+
+    try {
+      const res = await fetch('/api/calculate-chart', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        // FIXED: Redirect to horoscope instead of birthchart
+        window.location.href = '/dashboard';
+      } else {
+        alert(data.error || 'Error generating chart');
+        submitBtn.style.display = 'flex';
+        loading.classList.remove('active');
+      }
+    } catch (err) {
+      alert('Connection error. Please try again.');
+      submitBtn.style.display = 'flex';
+      loading.classList.remove('active');
+    }
+  });
+</script>
+
+{% endblock %}

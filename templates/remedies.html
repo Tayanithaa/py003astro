@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="section" style="max-width:900px;margin:0 auto;padding:2rem 1rem">
+    <h1 style="font-family:Cinzel,serif;color:#FFD700;text-align:center;margin-bottom:0.5rem">🕉️ {% if language=="ta" %}கிரக பரிகாரங்கள்{% else %}Planetary Remedies{% endif %}</h1>
+    <p style="text-align:center;color:rgba(255,255,255,0.4);margin-bottom:2rem">{% if language=="ta" %}ஒவ்வொரு கிரகத்திற்கும் பரிகாரங்கள்{% else %}Authentic remedies for all 9 planets{% endif %}</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem">
+    {% for p in [("Sun","☀️","#FF8C00","Ruby","Sunday","Donate wheat & copper","Chant Aditya Hridayam","சூரியன்"),("Moon","🌙","#C0C0FF","Pearl","Monday","Donate rice & silver","Chant Chandra mantra","சந்திரன்"),("Mars","♂","#FF4444","Red Coral","Tuesday","Donate red lentils","Chant Hanuman Chalisa","செவ்வாய்"),("Mercury","☿","#44BB44","Emerald","Wednesday","Donate green vegetables","Chant Budh mantra","புதன்"),("Jupiter","♃","#FFD700","Yellow Sapphire","Thursday","Donate yellow items","Chant Guru mantra","குரு"),("Venus","♀","#FF69B4","Diamond","Friday","Donate rice & sugar","Chant Shukra mantra","சுக்ரன்"),("Saturn","♄","#8888FF","Blue Sapphire","Saturday","Donate sesame & iron","Chant Shani Chalisa","சனி"),("Rahu","☊","#AA44AA","Hessonite","Saturday","Donate blue items","Chant Rahu mantra","ராகு"),("Ketu","☋","#AA8844","Cat's Eye","Tuesday","Donate sesame & wool","Chant Ketu mantra","கேது")] %}
+    <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:1.2rem">
+        <div style="display:flex;align-items:center;gap:.8rem;margin-bottom:1rem">
+            <span style="font-size:1.5rem;color:{{ p[2] }}">{{ p[1] }}</span>
+            <div>
+                <div style="font-family:Cinzel,serif;color:{{ p[2] }};font-weight:700">{% if language=="ta" %}{{ p[7] }}{% else %}{{ p[0] }}{% endif %}</div>
+            </div>
+        </div>
+        <div style="font-size:.82rem;color:rgba(255,255,255,0.5);margin-bottom:.3rem">💎 {% if language=="ta" %}ரத்தினம்{% else %}Gemstone{% endif %}: <span style="color:#FFD700">{{ p[3] }}</span></div>
+        <div style="font-size:.82rem;color:rgba(255,255,255,0.5);margin-bottom:.3rem">📅 {% if language=="ta" %}நாள்{% else %}Day{% endif %}: <span style="color:#FFD700">{{ p[4] }}</span></div>
+        <div style="font-size:.82rem;color:rgba(255,255,255,0.5);margin-bottom:.3rem">🙏 {% if language=="ta" %}தானம்{% else %}Charity{% endif %}: {{ p[5] }}</div>
+        <div style="font-size:.82rem;color:rgba(255,255,255,0.5)">📿 {% if language=="ta" %}மந்திரம்{% else %}Mantra{% endif %}: {{ p[6] }}</div>
+    </div>
+    {% endfor %}
+    </div>
+</section>
+{% endblock %}

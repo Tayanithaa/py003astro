@@ -1,0 +1,221 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section style="padding: 2rem 1rem; max-width: 900px; margin: 0 auto;">
+
+    <!-- Page Title -->
+    <div style="text-align:center; margin-bottom: 2.5rem;">
+        <h1 style="font-family:'Cinzel',serif; color:#FFD700; font-size:2rem; margin-bottom:0.4rem;">
+            🗓️ Daily Panchangam
+        </h1>
+        <p style="color:rgba(255,255,255,0.5); font-size:0.9rem;">
+            {{ panchangam.date }} &nbsp;|&nbsp;
+            {% if language == 'ta' %}{{ panchangam.date_ta }}{% endif %}
+            Lahiri Ayanamsa: {{ panchangam.ayanamsa }}°
+        </p>
+        <div style="display:inline-block; margin-top:0.8rem; padding:0.4rem 1.2rem;
+                    background:rgba(255,215,0,0.1); border:1px solid rgba(255,215,0,0.3);
+                    border-radius:20px; font-size:0.9rem; color:#FFD700;">
+            {{ panchangam.auspicious }}
+        </div>
+    </div>
+
+    <!-- Moon Phase Banner -->
+    <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,215,0,0.2);
+                border-radius:16px; padding:1.2rem 2rem; margin-bottom:2rem;
+                display:flex; align-items:center; gap:1.5rem; flex-wrap:wrap;">
+        <span style="font-size:3rem;">{{ panchangam.moon_phase.label.split()[0] }}</span>
+        <div>
+            <div style="color:#FFD700; font-size:1.1rem; font-weight:600;">
+                {{ panchangam.moon_phase.name }}
+            </div>
+            <div style="color:rgba(255,255,255,0.5); font-size:0.85rem;">
+                Moon–Sun angle: {{ panchangam.moon_phase.angle }}° &nbsp;|&nbsp;
+                {{ panchangam.tithi.paksha }}
+                {% if language == 'ta' %}/ {{ panchangam.tithi.paksha_ta }}{% endif %}
+            </div>
+        </div>
+        <div style="margin-left:auto; text-align:right;">
+            <div style="color:rgba(255,255,255,0.4); font-size:0.75rem; margin-bottom:0.3rem;">
+                Moon longitude
+            </div>
+            <div style="color:#FFD700; font-size:1rem; font-weight:600;">
+                {{ panchangam.moon_long }}°
+            </div>
+        </div>
+    </div>
+
+    <!-- 5 Elements Grid -->
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+                gap:1rem; margin-bottom:2rem;">
+
+        <!-- Tithi -->
+        <div class="glass-card panchang-card">
+            <div class="panchang-icon">🌙</div>
+            <div class="panchang-label">
+                {% if language == 'ta' %}திதி{% else %}Tithi{% endif %}
+            </div>
+            <div class="panchang-value">
+                {% if language == 'ta' %}{{ panchangam.tithi.name_ta }}{% else %}{{ panchangam.tithi.name }}{% endif %}
+            </div>
+            <div class="panchang-sub">{{ panchangam.tithi.type }} • Day {{ panchangam.tithi.number }}</div>
+            <div class="panchang-progress">
+                <div class="panchang-bar" style="width:{{ panchangam.tithi.elapsed }}%"></div>
+            </div>
+            <div class="panchang-percent">{{ panchangam.tithi.elapsed }}% elapsed</div>
+        </div>
+
+        <!-- Vara -->
+        <div class="glass-card panchang-card">
+            <div class="panchang-icon" style="color:{{ panchangam.vara.color }}">
+                {{ panchangam.vara.symbol }}
+            </div>
+            <div class="panchang-label">
+                {% if language == 'ta' %}வாரம்{% else %}Vara{% endif %}
+            </div>
+            <div class="panchang-value">
+                {% if language == 'ta' %}{{ panchangam.vara.ta }}{% else %}{{ panchangam.vara.en }}{% endif %}
+            </div>
+            <div class="panchang-sub">Ruled by {{ panchangam.vara.planet }}</div>
+        </div>
+
+        <!-- Nakshatra -->
+        <div class="glass-card panchang-card">
+            <div class="panchang-icon">⭐</div>
+            <div class="panchang-label">
+                {% if language == 'ta' %}நட்சத்திரம்{% else %}Nakshatra{% endif %}
+            </div>
+            <div class="panchang-value">
+                {% if language == 'ta' %}{{ panchangam.nakshatra.name_ta }}{% else %}{{ panchangam.nakshatra.name }}{% endif %}
+            </div>
+            <div class="panchang-sub">Pada {{ panchangam.nakshatra.pada }}</div>
+            <div class="panchang-progress">
+                <div class="panchang-bar" style="width:{{ panchangam.nakshatra.elapsed }}%"></div>
+            </div>
+            <div class="panchang-percent">{{ panchangam.nakshatra.elapsed }}% elapsed</div>
+        </div>
+
+        <!-- Yoga -->
+        <div class="glass-card panchang-card">
+            <div class="panchang-icon">🔯</div>
+            <div class="panchang-label">
+                {% if language == 'ta' %}யோகம்{% else %}Yoga{% endif %}
+            </div>
+            <div class="panchang-value">
+                {% if language == 'ta' %}{{ panchangam.yoga.name_ta }}{% else %}{{ panchangam.yoga.name }}{% endif %}
+            </div>
+            <div class="panchang-sub"
+                 style="color:{{ '#44BB44' if panchangam.yoga.quality == 'Auspicious' else '#FF6644' }}">
+                {{ panchangam.yoga.quality }}
+            </div>
+        </div>
+
+        <!-- Karana -->
+        <div class="glass-card panchang-card">
+            <div class="panchang-icon">☯️</div>
+            <div class="panchang-label">
+                {% if language == 'ta' %}கரணம்{% else %}Karana{% endif %}
+            </div>
+            <div class="panchang-value">
+                {% if language == 'ta' %}{{ panchangam.karana.name_ta }}{% else %}{{ panchangam.karana.name }}{% endif %}
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Timings Row -->
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:2rem;">
+
+        <!-- Rahu Kalam -->
+        <div style="background:rgba(255,68,68,0.08); border:1px solid rgba(255,68,68,0.25);
+                    border-radius:14px; padding:1.2rem 1.5rem;">
+            <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.6rem;">
+                <span style="font-size:1.3rem;">⚠️</span>
+                <span style="color:#FF6644; font-weight:600; font-size:0.95rem;">
+                    {% if language == 'ta' %}ராஹு காலம்{% else %}Rahu Kalam{% endif %}
+                </span>
+            </div>
+            <div style="color:#FFD700; font-size:1.1rem; font-weight:700;">
+                {{ panchangam.rahu_kalam.start }} – {{ panchangam.rahu_kalam.end }}
+            </div>
+            <div style="color:rgba(255,255,255,0.4); font-size:0.78rem; margin-top:0.3rem;">
+                {% if language == 'ta' %}இந்த நேரத்தில் முக்கியமான காரியங்களை தவிர்க்கவும்{% else %}Avoid important activities during this time{% endif %}
+            </div>
+        </div>
+
+        <!-- Abhijit Muhurta -->
+        <div style="background:rgba(68,187,68,0.08); border:1px solid rgba(68,187,68,0.25);
+                    border-radius:14px; padding:1.2rem 1.5rem;">
+            <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.6rem;">
+                <span style="font-size:1.3rem;">✨</span>
+                <span style="color:#44BB44; font-weight:600; font-size:0.95rem;">
+                    {% if language == 'ta' %}அபிஜித் முஹூர்த்தம்{% else %}Abhijit Muhurta{% endif %}
+                </span>
+            </div>
+            <div style="color:#FFD700; font-size:1.1rem; font-weight:700;">
+                {{ panchangam.abhijit.start }} – {{ panchangam.abhijit.end }}
+            </div>
+            <div style="color:rgba(255,255,255,0.4); font-size:0.78rem; margin-top:0.3rem;">
+                {% if language == 'ta' %}மிகவும் சாதகமான நேரம் — முக்கிய காரியங்களுக்கு ஏற்றது{% else %}Most auspicious time — ideal for important activities{% endif %}
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+<style>
+.panchang-card {
+    padding: 1.2rem;
+    text-align: center;
+    transition: transform 0.2s;
+}
+.panchang-card:hover { transform: translateY(-3px); }
+.panchang-icon {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+    color: #FFD700;
+}
+.panchang-label {
+    color: rgba(255,255,255,0.4);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 0.3rem;
+}
+.panchang-value {
+    color: #FFD700;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+    font-family: 'Cinzel', serif;
+}
+.panchang-sub {
+    color: rgba(255,255,255,0.5);
+    font-size: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+.panchang-progress {
+    height: 3px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+    overflow: hidden;
+    margin: 0.4rem 0 0.2rem;
+}
+.panchang-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #FFD700, #FF8C00);
+    border-radius: 2px;
+    transition: width 1s ease;
+}
+.panchang-percent {
+    color: rgba(255,255,255,0.3);
+    font-size: 0.68rem;
+}
+.glass-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,215,0,0.15);
+    border-radius: 14px;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="section" style="max-width:800px;margin:0 auto;padding:2rem 1rem">
+    <h1 style="font-family:Cinzel,serif;color:#FFD700;text-align:center;margin-bottom:2rem">💰 {% if language=="ta" %}நிதி ஜோதிடம்{% else %}Financial Astrology{% endif %}</h1>
+    {% if user_chart %}
+    <div class="result-card">
+        <h3 style="color:#FFD700;margin-bottom:1.5rem">
+            {{ user_chart.rasi.symbol }} {% if language=="ta" %}{{ user_chart.rasi.tamilName }}{% else %}{{ user_chart.rasi.englishName }}{% endif %} — {% if language=="ta" %}நிதி கணிப்புகள்{% else %}Financial Forecast{% endif %}
+        </h3>
+        {% set lucky = user_chart.lucky %}
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-bottom:1.5rem">
+            <div class="panch-card"><div class="panch-icon">💎</div><div class="panch-label">Lucky Gem</div><div class="panch-value">{{ lucky.gem }}</div></div>
+            <div class="panch-card"><div class="panch-icon">📅</div><div class="panch-label">Lucky Day</div><div class="panch-value">{{ lucky.day }}</div></div>
+            <div class="panch-card"><div class="panch-icon">🔢</div><div class="panch-label">Lucky Number</div><div class="panch-value">{{ lucky.number }}</div></div>
+            <div class="panch-card"><div class="panch-icon">🎨</div><div class="panch-label">Lucky Color</div><div class="panch-value">{{ lucky.color }}</div></div>
+        </div>
+        <div style="background:rgba(255,215,0,0.05);border:1px solid rgba(255,215,0,0.2);border-radius:12px;padding:1.2rem">
+            <h4 style="color:#FFD700;margin-bottom:.8rem">{% if language=="ta" %}நிதி ஆலோசனை{% else %}Financial Advice{% endif %}</h4>
+            <p style="color:rgba(255,255,255,0.7);line-height:1.7">
+                {% if language=="ta" %}
+                    {{ user_chart.nakshatra.tamilName }} நட்சத்திர அதிபதி {{ user_chart.nakshatra.lord }} உங்கள் நிதி திசையை வழிநடத்துகிறார். {{ lucky.day }} அன்று முக்கியமான நிதி முடிவுகள் எடுக்கவும். {{ lucky.gem }} அணிவது நிதி வாய்ப்புகளை கொண்டு வரும்.
+                {% else %}
+                    Your Nakshatra lord {{ user_chart.nakshatra.lord }} guides your financial direction. Make important financial decisions on {{ lucky.day }}. Wearing {{ lucky.gem }} attracts financial opportunities. Lucky number {{ lucky.number }} — use it for important transactions.
+                {% endif %}
+            </p>
+        </div>
+    </div>
+    {% else %}
+    <div style="text-align:center;padding:3rem">
+        <div style="font-size:3rem;margin-bottom:1rem">💰</div>
+        <p style="color:rgba(255,255,255,0.6);margin-bottom:1.5rem">{% if language=="ta" %}முதலில் முகப்பு பக்கத்தில் உங்கள் விவரங்களை உள்ளிடவும்{% else %}Enter your birth details first{% endif %}</p>
+        <a href="/" style="display:inline-block;padding:.8rem 2rem;background:linear-gradient(135deg,#FFD700,#FF8C00);color:#000;border-radius:25px;font-weight:700;text-decoration:none">{% if language=="ta" %}முகப்பு{% else %}Go Home{% endif %}</a>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

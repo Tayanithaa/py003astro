@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="{{ language }}">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AstroGuy AI | Authentic Vedic Astrology</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&family=Noto+Sans+Tamil:wght@400;500;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+    <div class="stars-bg" id="starsBg"></div>
+    <div class="loading-screen" id="loadingScreen">
+        <div class="cosmic-loader">
+            <div class="loader-orbit">
+                <div class="loader-planet"></div>
+            </div>
+            <div class="loader-orbit">
+                <div class="loader-planet"></div>
+            </div>
+            <div class="loader-orbit">
+                <div class="loader-planet"></div>
+            </div>
+        </div>
+        <div class="loading-text">{{ translations.loadingText }}</div>
+    </div>
+
+    <!-- Updated Navigation with Hamburger -->
+    <nav class="nav">
+        <a href="/" class="nav-brand">
+            <i class="fas fa-star"></i>
+            <span>ASTROGUY AI</span>
+        </a>
+        <div class="nav-right">
+            <button class="lang-toggle" onclick="toggleLanguage()">{{ translations.langText }}</button>
+            <button class="hamburger-btn" onclick="toggleSidebar()" aria-label="Menu">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Sidebar Menu -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-brand">
+                <i class="fas fa-star"></i>
+                <span>AstroGuy AI</span>
+            </div>
+            <button class="sidebar-close" onclick="toggleSidebar()" aria-label="Close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="sidebar-content">
+            <!-- Home -->
+            <a href="/" class="sidebar-link {% if request.path=='/' %}active{% endif %}">
+                <i class="fas fa-home"></i>
+                <span>{% if language=='ta' %}முகப்பு{% else %}Home{% endif %}</span>
+            </a>
+            
+            <a href="/dashboard" class="sidebar-link {% if request.path == '/dashboard' %}active{% endif %}">
+                <span class="sidebar-link-icon">📊</span>
+                <span>{% if language == 'ta' %}எனது டாஷ்போர்டு{% else %}My Dashboard{% endif %}</span>
+            </a>
+
+            <!-- Astrology Section -->
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">
+                    <i class="fas fa-star-of-life"></i>
+                    <span>{% if language=='ta' %}ஜோதிடம்{% else %}Astrology{% endif %}</span>
+                </div>
+                <a href="/horoscope" class="sidebar-link {% if request.path=='/horoscope' %}active{% endif %}">
+                    <i class="fas fa-moon"></i>
+                    <span>{% if language=='ta' %}ராசி பலன்{% else %}Horoscope{% endif %}</span>
+                </a>
+                <a href="/birthchart" class="sidebar-link {% if request.path=='/birthchart' %}active{% endif %}">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>{% if language=='ta' %}ஜாதகம்{% else %}Birth Chart{% endif %}</span>
+                </a>
+                <a href="/predictions" class="sidebar-link {% if request.path=='/predictions' %}active{% endif %}">
+                    <i class="fas fa-crystal-ball"></i>
+                    <span>{% if language=='ta' %}கணிப்புகள்{% else %}Predictions{% endif %}</span>
+                </a>
+            </div>
+
+            <!-- Relationships Section -->
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">
+                    <i class="fas fa-heart"></i>
+                    <span>{% if language=='ta' %}உறவுகள்{% else %}Relationships{% endif %}</span>
+                </div>
+                <a href="/compatibility" class="sidebar-link {% if request.path=='/compatibility' %}active{% endif %}">
+                    <i class="fas fa-people-arrows"></i>
+                    <span>{% if language=='ta' %}பொருத்தம்{% else %}Compatibility{% endif %}</span>
+                </a>
+                <a href="/cosmic-card" class="sidebar-link {% if request.path=='/cosmic-card' %}active{% endif %}">
+                    <i class="fas fa-id-card"></i>
+                    <span>{% if language=='ta' %}என் அட்டை{% else %}Cosmic Card{% endif %}</span>
+                </a>
+            </div>
+
+            <!-- Sacred Timing Section -->
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>{% if language=='ta' %}புனித நேரம்{% else %}Sacred Timing{% endif %}</span>
+                </div>
+                <a href="/panchangam" class="sidebar-link {% if request.path=='/panchangam' %}active{% endif %}">
+                    <i class="fas fa-sun"></i>
+                    <span>{% if language=='ta' %}பஞ்சாங்கம்{% else %}Panchangam{% endif %}</span>
+                </a>
+                <a href="/remedies" class="sidebar-link {% if request.path=='/remedies' %}active{% endif %}">
+                    <i class="fas fa-hands-praying"></i>
+                    <span>{% if language=='ta' %}பரிகாரம்{% else %}Remedies{% endif %}</span>
+                </a>
+            </div>
+
+            <!-- Life Guidance Section -->
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">
+                    <i class="fas fa-compass"></i>
+                    <span>{% if language=='ta' %}வாழ்க்கை வழிகாட்டி{% else %}Life Guidance{% endif %}</span>
+                </div>
+                <a href="/finance" class="sidebar-link {% if request.path=='/finance' %}active{% endif %}">
+                    <i class="fas fa-coins"></i>
+                    <span>{% if language=='ta' %}நிதி{% else %}Finance{% endif %}</span>
+                </a>
+                <a href="/wellness" class="sidebar-link {% if request.path=='/wellness' %}active{% endif %}">
+                    <i class="fas fa-spa"></i>
+                    <span>{% if language=='ta' %}நலன்{% else %}Wellness{% endif %}</span>
+                </a>
+            </div>
+
+            <!-- Interactive Section -->
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">
+                    <i class="fas fa-gamepad"></i>
+                    <span>{% if language=='ta' %}ஊடாடும்{% else %}Interactive{% endif %}</span>
+                </div>
+                <a href="/chat" class="sidebar-link {% if request.path=='/chat' %}active{% endif %}">
+                    <i class="fas fa-robot"></i>
+                    <span>{% if language=='ta' %}AI உரையாடல்{% else %}AI Chat{% endif %}</span>
+                    <span class="ml-badge">ML</span>
+                </a>
+                <a href="/quiz" class="sidebar-link {% if request.path=='/quiz' %}active{% endif %}">
+                    <i class="fas fa-question-circle"></i>
+                    <span>{% if language=='ta' %}வினாடி வினா{% else %}Personality Quiz{% endif %}</span>
+                </a>
+                <a href="/videos" class="sidebar-link {% if request.path=='/videos' %}active{% endif %}">
+                    <i class="fas fa-video"></i>
+                    <span>{% if language=='ta' %}வீடியோக்கள்{% else %}Videos{% endif %}</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Sidebar Footer -->
+        <div class="sidebar-footer">
+            <div class="sidebar-footer-stats">
+                <div class="stat-item">
+                    <i class="fas fa-users"></i>
+                    <span>10K+ Users</span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>50K+ Charts</span>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <main>{% block content %}{% endblock %}</main>
+
+    <a href="/chat" class="floating-chat" title="Chat with AstroGuy AI">
+        <i class="fas fa-robot"></i>
+    </a>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>
+        // Sidebar toggle functionality
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            const isOpen = sidebar.classList.contains('open');
+
+            if (isOpen) {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('active');
+                document.body.style.overflow = '';
+            } else {
+                sidebar.classList.add('open');
+                overlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        // Close sidebar on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const sidebar = document.getElementById('sidebar');
+                if (sidebar.classList.contains('open')) {
+                    toggleSidebar();
+                }
+            }
+        });
+
+        // Close sidebar when clicking a link (mobile)
+        document.querySelectorAll('.sidebar-link').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 768) {
+                    toggleSidebar();
+                }
+            });
+        });
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

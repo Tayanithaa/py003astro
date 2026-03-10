@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="section" style="max-width:900px;margin:0 auto;padding:2rem 1rem">
+    <h1 style="font-family:Cinzel,serif;color:#FFD700;text-align:center;margin-bottom:2rem">🎬 {% if language=="ta" %}ஜோதிட வீடியோக்கள்{% else %}Astrology Videos{% endif %}</h1>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem">
+    {% for v in videos %}
+    <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,215,0,0.15);border-radius:14px;overflow:hidden">
+        <div style="position:relative;padding-bottom:56.25%">
+            <iframe style="position:absolute;top:0;left:0;width:100%;height:100%;border:none" src="https://www.youtube.com/embed/{{ v.id }}" allowfullscreen loading="lazy"></iframe>
+        </div>
+        <div style="padding:1rem">
+            <div style="color:#FFD700;font-weight:600;margin-bottom:.3rem">{{ v.title }}</div>
+            <div style="color:rgba(255,255,255,0.4);font-size:.8rem">{{ v.meta }}</div>
+        </div>
+    </div>
+    {% endfor %}
+    </div>
+</section>
+{% endblock %}

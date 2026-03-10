@@ -1,0 +1,426 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section style="max-width:780px;margin:0 auto;padding:2rem 1rem;min-height:calc(100vh - 80px)">
+
+    <!-- Header -->
+    <div class="wl-header">
+        <div class="wl-header-icon">🌿</div>
+        <div>
+            <h1 class="wl-title">{% if language=="ta" %}நல்வாழ்வு & கிரக நலன்{% else %}Wellness & Planetary Health{%
+                endif %}</h1>
+            <p class="wl-subtitle">{% if language=="ta" %}இன்றைய கிரக நிலை உங்கள் நலனை எவ்வாறு பாதிக்கிறது{% else %}How
+                today's planetary energy shapes your mind & body{% endif %}</p>
+        </div>
+    </div>
+
+    <!-- Planetary Energy Strip -->
+    <div class="wl-energy-strip">
+        <div class="wl-energy-item">
+            <span class="wl-energy-label">🌙 Moon</span>
+            <span class="wl-energy-val">{{ panchangam.nakshatra.name }}</span>
+            <span class="wl-energy-sub">Pada {{ panchangam.nakshatra.pada }}</span>
+        </div>
+        <div class="wl-energy-divider"></div>
+        <div class="wl-energy-item">
+            <span class="wl-energy-label">☀️ Day Ruler</span>
+            <span class="wl-energy-val">{{ panchangam.vara.planet }}</span>
+            <span class="wl-energy-sub">{{ panchangam.vara.symbol }}</span>
+        </div>
+        <div class="wl-energy-divider"></div>
+        <div class="wl-energy-item">
+            <span class="wl-energy-label">✦ Yoga</span>
+            <span class="wl-energy-val"
+                style="color:{{ '#5ECA8B' if panchangam.yoga.quality == 'Auspicious' else '#FF7B6B' }}">{{
+                panchangam.yoga.name }}</span>
+            <span class="wl-energy-sub">{{ panchangam.yoga.quality }}</span>
+        </div>
+        <div class="wl-energy-divider"></div>
+        <div class="wl-energy-item">
+            <span class="wl-energy-label">🌑 Phase</span>
+            <span class="wl-energy-val">{{ panchangam.moon_phase.icon }} {{ panchangam.moon_phase.label }}</span>
+            <span class="wl-energy-sub">Moon Phase</span>
+        </div>
+    </div>
+
+    <!-- Mood Section -->
+    <div class="wl-card">
+        <div class="wl-card-header">
+            <span class="wl-card-icon">💭</span>
+            <h3 class="wl-card-title">{% if language=="ta" %}இன்று நீங்கள் எப்படி உணர்கிறீர்கள்?{% else %}How are you
+                feeling today?{% endif %}</h3>
+        </div>
+
+        <div class="wl-mood-row">
+            {% for emoji, mood, ta in [
+            ("😊","Happy","மகிழ்ச்சி"),
+            ("😔","Low","சோர்வு"),
+            ("😤","Stressed","மன அழுத்தம்"),
+            ("😴","Tired","களைப்பு"),
+            ("🧘","Calm","அமைதி"),
+            ("🔥","Energetic","ஊக்கம்")
+            ] %}
+            <button class="wl-mood-chip" onclick="selectMood('{{ mood }}', this)" data-mood="{{ mood }}">
+                <span class="wl-chip-emoji">{{ emoji }}</span>
+                <span class="wl-chip-label">{% if language=="ta" %}{{ ta }}{% else %}{{ mood }}{% endif %}</span>
+            </button>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Advice Panel -->
+    <div id="moodAdvice" class="wl-advice" style="display:none">
+        <div class="wl-advice-inner">
+            <div class="wl-advice-tag">✦ {% if language=="ta" %}ஜோதிட ஆலோசனை{% else %}Astrological Advice{% endif %}
+            </div>
+            <p id="moodAdviceText" class="wl-advice-text"></p>
+            <div class="wl-advice-deco"></div>
+        </div>
+    </div>
+
+    <!-- Body Wellness Grid -->
+    <div class="wl-card" style="margin-top:1.5rem">
+        <div class="wl-card-header">
+            <span class="wl-card-icon">⚡</span>
+            <h3 class="wl-card-title">{% if language=="ta" %}கிரக ஆரோக்கிய வழிகாட்டி{% else %}Planetary Health Guide{%
+                endif %}</h3>
+        </div>
+        <div class="wl-guide-grid">
+            <div class="wl-guide-item">
+                <div class="wl-guide-planet">☀️ Sun</div>
+                <div class="wl-guide-tip">{% if language=="ta" %}சக்தி, ஆன்மா, தலைவலி{% else %}Vitality, soul,
+                    headaches{% endif %}</div>
+            </div>
+            <div class="wl-guide-item">
+                <div class="wl-guide-planet">🌙 Moon</div>
+                <div class="wl-guide-tip">{% if language=="ta" %}மனம், தூக்கம், உணர்வுகள்{% else %}Mind, sleep,
+                    emotions{% endif %}</div>
+            </div>
+            <div class="wl-guide-item">
+                <div class="wl-guide-planet">🔴 Mars</div>
+                <div class="wl-guide-tip">{% if language=="ta" %}சக்தி, ரத்தம், தசைகள்{% else %}Energy, blood, muscles{%
+                    endif %}</div>
+            </div>
+            <div class="wl-guide-item">
+                <div class="wl-guide-planet">💚 Mercury</div>
+                <div class="wl-guide-tip">{% if language=="ta" %}நரம்பு, சுவாசம், கவலை{% else %}Nerves, breathing,
+                    anxiety{% endif %}</div>
+            </div>
+            <div class="wl-guide-item">
+                <div class="wl-guide-planet">🟡 Jupiter</div>
+                <div class="wl-guide-tip">{% if language=="ta" %}கல்லீரல், ஆன்மீகம்{% else %}Liver, growth, immunity{%
+                    endif %}</div>
+            </div>
+            <div class="wl-guide-item">
+                <div class="wl-guide-planet">🔵 Saturn</div>
+                <div class="wl-guide-tip">{% if language=="ta" %}மூட்டுகள், தொடர்நோய்{% else %}Joints, chronic issues{%
+                    endif %}</div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<style>
+    /* ── Header ── */
+    .wl-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.8rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+    }
+
+    .wl-header-icon {
+        font-size: 2.2rem;
+    }
+
+    .wl-title {
+        font-family: 'Cinzel', serif;
+        color: #FFD700;
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0 0 0.2rem;
+    }
+
+    .wl-subtitle {
+        color: rgba(255, 255, 255, 0.4);
+        font-size: 0.85rem;
+        margin: 0;
+        line-height: 1.5;
+    }
+
+    /* ── Energy Strip ── */
+    .wl-energy-strip {
+        display: flex;
+        align-items: stretch;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 215, 0, 0.12);
+        border-radius: 16px;
+        padding: 0;
+        margin-bottom: 1.5rem;
+        overflow: hidden;
+    }
+
+    .wl-energy-item {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 1rem 0.5rem;
+        gap: 0.2rem;
+    }
+
+    .wl-energy-divider {
+        width: 1px;
+        background: rgba(255, 215, 0, 0.1);
+        margin: 0.5rem 0;
+    }
+
+    .wl-energy-label {
+        font-size: 0.7rem;
+        color: rgba(255, 255, 255, 0.35);
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    .wl-energy-val {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: #FFD700;
+        text-align: center;
+    }
+
+    .wl-energy-sub {
+        font-size: 0.72rem;
+        color: rgba(255, 255, 255, 0.35);
+    }
+
+    /* ── Card ── */
+    .wl-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 215, 0, 0.12);
+        border-radius: 20px;
+        padding: 1.5rem;
+        backdrop-filter: blur(10px);
+        animation: wlFade 0.5s ease;
+    }
+
+    .wl-card-header {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        margin-bottom: 1.2rem;
+    }
+
+    .wl-card-icon {
+        font-size: 1.1rem;
+    }
+
+    .wl-card-title {
+        font-family: 'Cinzel', serif;
+        color: #FFD700;
+        font-size: 1rem;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    /* ── Mood chips ── */
+    .wl-mood-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.6rem;
+    }
+
+    .wl-mood-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.55rem 1.1rem;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1.5px solid rgba(255, 215, 0, 0.15);
+        border-radius: 50px;
+        cursor: pointer;
+        transition: all 0.22s;
+        color: rgba(255, 255, 255, 0.65);
+        font-size: 0.88rem;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+
+    .wl-chip-emoji {
+        font-size: 1.1rem;
+        line-height: 1;
+    }
+
+    .wl-mood-chip:hover {
+        background: rgba(255, 215, 0, 0.08);
+        border-color: rgba(255, 215, 0, 0.4);
+        color: #FFD700;
+        transform: translateY(-2px);
+    }
+
+    .wl-mood-chip.active {
+        background: rgba(255, 215, 0, 0.14);
+        border-color: #FFD700;
+        color: #FFD700;
+        box-shadow: 0 0 16px rgba(255, 215, 0, 0.2);
+    }
+
+    /* ── Advice ── */
+    .wl-advice {
+        margin-top: 1.2rem;
+        animation: wlPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .wl-advice-inner {
+        position: relative;
+        background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 140, 0, 0.06));
+        border: 1px solid rgba(255, 215, 0, 0.25);
+        border-radius: 18px;
+        padding: 1.5rem;
+        overflow: hidden;
+    }
+
+    .wl-advice-tag {
+        font-size: 0.7rem;
+        letter-spacing: 3px;
+        color: rgba(255, 215, 0, 0.6);
+        text-transform: uppercase;
+        margin-bottom: 0.8rem;
+        font-weight: 600;
+    }
+
+    .wl-advice-text {
+        color: rgba(255, 255, 255, 0.85);
+        line-height: 1.8;
+        font-size: 1rem;
+        margin: 0;
+    }
+
+    .wl-advice-deco {
+        position: absolute;
+        top: -40px;
+        right: -40px;
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(255, 215, 0, 0.08), transparent 70%);
+        pointer-events: none;
+    }
+
+    /* ── Guide grid ── */
+    .wl-guide-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.75rem;
+    }
+
+    .wl-guide-item {
+        background: rgba(255, 255, 255, 0.025);
+        border: 1px solid rgba(255, 215, 0, 0.08);
+        border-radius: 12px;
+        padding: 0.8rem;
+    }
+
+    .wl-guide-planet {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #FFD700;
+        margin-bottom: 0.3rem;
+    }
+
+    .wl-guide-tip {
+        font-size: 0.75rem;
+        color: rgba(255, 255, 255, 0.45);
+        line-height: 1.5;
+    }
+
+    @keyframes wlFade {
+        from {
+            opacity: 0;
+            transform: translateY(12px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes wlPop {
+        from {
+            opacity: 0;
+            transform: scale(0.96);
+        }
+
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    @media (max-width: 600px) {
+        .wl-energy-strip {
+            flex-wrap: wrap;
+        }
+
+        .wl-energy-item {
+            min-width: 45%;
+        }
+
+        .wl-energy-divider {
+            display: none;
+        }
+
+        .wl-guide-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+</style>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const MOOD_ADVICE = {
+        "Happy": {
+            "en": "The Moon in {{ panchangam.nakshatra.name }} amplifies your joy today. Channel this positive energy into creative work or meaningful connections. A beautiful day for collaboration and new beginnings!",
+            "ta": "இன்று {{ panchangam.nakshatra.name }}ல் சந்திரன் உங்கள் மகிழ்ச்சியை அதிகரிக்கிறது. இந்த நேர்மறை ஆற்றலை படைப்பாற்றல் செயல்களில் செலுத்துங்கள்."
+        },
+        "Low": {
+            "en": "{{ panchangam.vara.planet }} rules today — an introspective energy. Rest is sacred wisdom, not weakness. Light a lamp this evening, take slow walks, and be gentle with yourself.",
+            "ta": "இன்று {{ panchangam.vara.planet }} ஆட்சி செய்கிறார். ஓய்வு பலவீனம் அல்ல — அது ஞானம். மாலையில் விளக்கேற்றி அமைதியான நடைப்பயிற்சி எடுங்கள்."
+        },
+        "Stressed": {
+            "en": "The {{ panchangam.yoga.name }} Yoga asks you to pause. Take 5 deep breaths right now, chant Om 21 times, drink warm water. Saturn's steady discipline will anchor your scattered energy.",
+            "ta": "{{ panchangam.yoga.name }} யோகம் நிறுத்தி யோசிக்கச் சொல்கிறது. 5 ஆழமான மூச்சுகள் எடுங்கள், 21 முறை ஓம் சொல்லுங்கள், வெதுவெதுப்பான நீர் குடியுங்கள்."
+        },
+        "Tired": {
+            "en": "The {{ panchangam.moon_phase.label }} naturally reduces vitality. Honour your body — sleep before 10pm, skip screens, sip warm turmeric milk. Recovery today means strength tomorrow.",
+            "ta": "{{ panchangam.moon_phase.label }} இயல்பாகவே சக்தியை குறைக்கிறது. 10 மணிக்கு முன் தூங்குங்கள். மஞ்சள் பால் குடியுங்கள். இன்றைய ஓய்வு நாளைய வலிமை."
+        },
+        "Calm": {
+            "en": "Your inner state perfectly matches {{ panchangam.nakshatra.name }}'s serene vibration. Use this precious clarity for deep meditation, mindful planning, or heartfelt journaling. Protect this peace.",
+            "ta": "உங்கள் மனநிலை {{ panchangam.nakshatra.name }}ன் அமைதியான அதிர்வெண்ணுடன் நன்கு பொருந்துகிறது. இந்த தெளிவை தியானம் அல்லது டைரி எழுதுவதில் பயன்படுத்துங்கள்."
+        },
+        "Energetic": {
+            "en": "{{ panchangam.vara.planet }}'s influence supercharges you today! Direct this rare surge toward exercise, bold decisions, or starting projects you've delayed. The cosmos backs your momentum.",
+            "ta": "{{ panchangam.vara.planet }}ன் செல்வாக்கு உங்களை இன்று சக்திவாய்ந்ததாக ஆக்குகிறது! உடற்பயிற்சி, தைரியமான முடிவுகள் அல்லது நீண்ட நாளாக தாமதித்த திட்டங்களை தொடங்குங்கள்."
+        }
+    };
+
+    const LANG = "{{ language }}";
+
+    function selectMood(mood, btn) {
+        document.querySelectorAll('.wl-mood-chip').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const text = MOOD_ADVICE[mood]?.[LANG] || MOOD_ADVICE[mood]?.en || 'The stars have wisdom for you today.';
+        document.getElementById('moodAdviceText').textContent = text;
+        const panel = document.getElementById('moodAdvice');
+        panel.style.display = 'block';
+        setTimeout(() => panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
+    }
+</script>
+{% endblock %}

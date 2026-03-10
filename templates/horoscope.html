@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block content %}
+<section style="padding:2rem 1rem;max-width:960px;margin:0 auto">
+<div style="text-align:center;margin-bottom:2.5rem">
+  <h1 style="font-family:'Cinzel',serif;color:#FFD700;font-size:2rem">🌙 {% if language=='ta' %}ராசி பலன்கள்{% else %}Your Horoscope{% endif %}</h1>
+</div>
+
+{% if user_chart %}
+{% set hd = horoscope_data.ta if language=='ta' else horoscope_data.en %}
+
+<!-- Rasi Header Card -->
+<div class="glass-card" style="padding:2rem;margin-bottom:2rem;text-align:center">
+  <div style="font-size:3.5rem;margin-bottom:.5rem">{{ user_chart.rasi.symbol }}</div>
+  <h2 style="color:#FFD700;font-family:'Cinzel',serif;font-size:2rem;margin-bottom:.3rem">
+    {% if language=='ta' %}{{ user_chart.rasi.tamilName }}{% else %}{{ user_chart.rasi.englishName }}{% endif %}
+  </h2>
+  <p style="color:rgba(255,255,255,.5);font-size:.9rem">
+    {% if language=='ta' %}{{ user_chart.nakshatra.tamilName }}{% else %}{{ user_chart.nakshatra.name }}{% endif %}
+    • {% if language=='ta' %}பாதம்{% else %}Pada{% endif %} {{ user_chart.nakshatra.pada }}
+    • {% if language=='ta' %}அதிபதி{% else %}Lord{% endif %}: {{ user_chart.nakshatra.lord }}
+    • {{ user_chart.rasi.element }}
+  </p>
+</div>
+
+{% if hd %}
+<!-- Predictions grid -->
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.2rem;margin-bottom:2rem">
+  {% for cat, icon, label_en, label_ta in [
+    ('general','🌟','General','பொதுவான'),
+    ('career','💼','Career','தொழில்'),
+    ('love','❤️','Love & Marriage','காதல் & திருமணம்'),
+    ('health','🏥','Health','ஆரோக்கியம்'),
+    ('finance','💰','Finance','நிதி')
+  ] %}
+  {% if hd[cat] %}
+  <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,215,0,.15);border-radius:14px;padding:1.3rem">
+    <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.8rem">
+      <span style="font-size:1.3rem">{{ icon }}</span>
+      <span style="color:#FFD700;font-weight:600;font-size:.9rem">{% if language=='ta' %}{{ label_ta }}{% else %}{{ label_en }}{% endif %}</span>
+    </div>
+    <p style="color:rgba(255,255,255,.72);font-size:.88rem;line-height:1.7;margin:0">{{ hd[cat] }}</p>
+  </div>
+  {% endif %}
+  {% endfor %}
+</div>
+
+<!-- Lucky Elements — moved from Finance page -->
+<div class="glass-card" style="padding:1.8rem;margin-bottom:2rem">
+  <h3 style="color:#FFD700;font-family:'Cinzel',serif;margin-bottom:1.2rem;font-size:1.1rem">
+    ✨ {% if language=='ta' %}உங்கள் அதிர்ஷ்ட விவரங்கள்{% else %}Your Lucky Elements{% endif %}
+  </h3>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:1rem">
+    {% for label_en, label_ta, val, emoji in [
+      ('Lucky Color','அதிர்ஷ்ட நிறம', user_chart.lucky.color, '🎨'),
+      ('Lucky Number','அதிர்ஷ்ட எண்', user_chart.lucky.number, '🔢'),
+      ('Lucky Gem','அதிர்ஷ்ட ரத்தினம்', user_chart.lucky.gem, '💎'),
+      ('Lucky Day','அதிர்ஷ்ட நாள்', user_chart.lucky.day, '📅'),
+      ('Rasi Lord','ராசி அதிபதி', user_chart.rasi.lord, '🪐'),
+      ('Element','பூதம்', user_chart.rasi.element, '🌿')
+    ] %}
+    <div style="text-align:center;padding:.8rem;background:rgba(255,215,0,.06);border:1px solid rgba(255,215,0,.15);border-radius:10px">
+      <div style="font-size:1.4rem;margin-bottom:.3rem">{{ emoji }}</div>
+      <div style="color:rgba(255,255,255,.4);font-size:.68rem;text-transform:uppercase;letter-spacing:.5px;margin-bottom:.3rem">
+        {% if language=='ta' %}{{ label_ta }}{% else %}{{ label_en }}{% endif %}
+      </div>
+      <div style="color:#FFD700;font-weight:700;font-size:.9rem">{{ val }}</div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% endif %}
+
+{% else %}
+<!-- No chart yet -->
+<div style="text-align:center;padding:3rem;background:rgba(255,255,255,.04);border:1px dashed rgba(255,215,0,.3);border-radius:16px;margin-bottom:2rem">
+  <div style="font-size:3rem;margin-bottom:1rem">🔮</div>
+  <p style="color:rgba(255,255,255,.6);margin-bottom:1.5rem">
+    {% if language=='ta' %}முதலில் உங்கள் பிறந்த விவரங்களை உள்ளிடவும்{% else %}Enter your birth details first to see your personal horoscope{% endif %}
+  </p>
+  <a href="/" style="display:inline-block;padding:.8rem 2rem;background:linear-gradient(135deg,#FFD700,#FF8C00);color:#000;border-radius:25px;font-weight:700;text-decoration:none">
+    {% if language=='ta' %}முகப்பு{% else %}Go to Home{% endif %}
+  </a>
+</div>
+
+<!-- All 12 rasis preview -->
+<h2 style="color:#FFD700;font-family:'Cinzel',serif;margin-bottom:1.2rem;font-size:1.3rem">
+  {% if language=='ta' %}அனைத்து ராசி பலன்கள்{% else %}All 12 Rasi Horoscopes{% endif %}
+</h2>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem">
+{% for rasi_name, data in all_horoscope.items() %}
+{% set d = data.ta if language=='ta' else data.en %}
+<div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,215,0,.12);border-radius:12px;padding:1.2rem">
+  <div style="color:#FFD700;font-weight:700;font-family:'Cinzel',serif;margin-bottom:.5rem">{{ rasi_name }}</div>
+  <div style="color:rgba(255,255,255,.55);font-size:.82rem;line-height:1.5;margin-bottom:.7rem">{{ d.general[:100] }}...</div>
+  <div style="font-size:.75rem;color:rgba(255,215,0,.5)">💎 {{ d.lucky_gem if d.lucky_gem is defined else '' }} • 🎨 {{ d.lucky_color if d.lucky_color is defined else '' }}</div>
+</div>
+{% endfor %}
+</div>
+{% endif %}
+
+</section>
+{% endblock %}

@@ -1,0 +1,245 @@
+{% extends "base.html" %}
+{% block content %}
+<section style="padding:2rem 1rem;max-width:860px;margin:0 auto">
+  <div style="text-align:center;margin-bottom:2rem">
+    <h1 style="font-family:'Cinzel',serif;color:#FFD700;font-size:2rem">❤️ {% if language=='ta' %}திருமண பொருத்தம்{%
+      else %}Marriage Compatibility{% endif %}</h1>
+    <p style="color:rgba(255,255,255,.4);font-size:.85rem">{% if language=='ta' %}10 பொருத்தம் + நாடி — தமிழ் வேத ஜோதிட
+      முறை{% else %}10 Porutham + Nadi — Authentic Tamil Vedic Method{% endif %}</p>
+  </div>
+
+  <div class="glass-card" style="padding:2rem;margin-bottom:2rem">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem">
+      <div>
+        <h3 style="color:#FFD700;margin-bottom:1rem">{% if language=='ta' %}பெண் விவரங்கள்{% else %}Girl's Details{%
+          endif %} 👰</h3>
+        <div class="input-group"><label>{% if language=='ta' %}பிறந்த தேதி{% else %}Date of Birth{% endif %}</label>
+          <div class="input-wrapper"><i class="fas fa-calendar"></i><input type="date" id="compatDob1"></div>
+        </div>
+        <div class="input-group"><label>{% if language=='ta' %}பிறந்த நேரம்{% else %}Birth Time{% endif %}</label>
+          <div class="input-wrapper"><i class="fas fa-clock"></i><input type="time" id="compatTime1"></div>
+        </div>
+        <div id="girl_info"
+          style="margin-top:.6rem;padding:.6rem;background:rgba(255,215,0,.05);border-radius:8px;font-size:.8rem;color:rgba(255,215,0,.7);display:none">
+        </div>
+      </div>
+      <div>
+        <h3 style="color:#FF69B4;margin-bottom:1rem">{% if language=='ta' %}ஆண் விவரங்கள்{% else %}Boy's Details{% endif
+          %} 🤵</h3>
+        <div class="input-group"><label>{% if language=='ta' %}பிறந்த தேதி{% else %}Date of Birth{% endif %}</label>
+          <div class="input-wrapper"><i class="fas fa-calendar"></i><input type="date" id="compatDob2"></div>
+        </div>
+        <div class="input-group"><label>{% if language=='ta' %}பிறந்த நேரம்{% else %}Birth Time{% endif %}</label>
+          <div class="input-wrapper"><i class="fas fa-clock"></i><input type="time" id="compatTime2"></div>
+        </div>
+        <div id="boy_info"
+          style="margin-top:.6rem;padding:.6rem;background:rgba(255,105,180,.05);border-radius:8px;font-size:.8rem;color:rgba(255,105,180,.7);display:none">
+        </div>
+      </div>
+    </div>
+    <button id="compatBtn" onclick="calculateCompatibility()" class="btn-primary" style="width:100%;margin-top:1.5rem">
+      <i class="fas fa-heart"></i> {% if language=='ta' %}பொருத்தம் பார்க்க{% else %}Check Compatibility{% endif %}
+    </button>
+  </div>
+
+  <div id="compatResult" style="display:none">
+    <!-- Score card -->
+    <div class="glass-card" style="padding:2rem;text-align:center;margin-bottom:1.5rem">
+      <div style="font-size:3.5rem;font-weight:700;font-family:'Cinzel',serif;color:#FFD700" id="compatScore">--/11
+      </div>
+      <div style="color:rgba(255,255,255,.4);margin:.3rem 0;font-size:.85rem">
+        <span id="compatPct"></span> {% if language=='ta' %}பொருத்தம்{% else %}Compatibility{% endif %}
+      </div>
+      <div style="font-size:1.2rem;font-weight:700;margin:.6rem 0" id="compatVerdict"></div>
+
+      <!-- Girl & Boy summary -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1.2rem;text-align:left">
+        <div style="background:rgba(255,215,0,.05);border:1px solid rgba(255,215,0,.2);border-radius:10px;padding:1rem"
+          id="girl_summary"></div>
+        <div
+          style="background:rgba(255,105,180,.05);border:1px solid rgba(255,105,180,.2);border-radius:10px;padding:1rem"
+          id="boy_summary"></div>
+      </div>
+    </div>
+
+    <!-- 10+1 Poruthams grid -->
+    <div class="glass-card" style="padding:2rem;margin-bottom:1.5rem">
+      <h3 style="color:#FFD700;font-family:'Cinzel',serif;margin-bottom:1.5rem;font-size:1.1rem">
+        {% if language=='ta' %}10 பொருத்தங்கள் + நாடி{% else %}10 Poruthams + Nadi{% endif %}
+      </h3>
+      <div id="poruthamGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem">
+      </div>
+    </div>
+
+    <!-- Doshas -->
+    <div class="glass-card" style="padding:1.8rem" id="doshaSection">
+      <h3 style="color:#FFD700;font-family:'Cinzel',serif;margin-bottom:1rem">
+        ⚠️ {% if language=='ta' %}தோஷங்கள் மற்றும் பரிகாரங்கள்{% else %}Doshas & Remedies{% endif %}
+      </h3>
+      <div id="doshaList"></div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .porutham-card {
+    border-radius: 12px;
+    padding: 1rem;
+    transition: transform .2s
+  }
+
+  .porutham-card:hover {
+    transform: translateY(-2px)
+  }
+
+  .porutham-card.match {
+    background: rgba(68, 187, 68, .08);
+    border: 1px solid rgba(68, 187, 68, .25)
+  }
+
+  .porutham-card.no-match {
+    background: rgba(255, 68, 68, .06);
+    border: 1px solid rgba(255, 68, 68, .2)
+  }
+
+  .porutham-card.critical-fail {
+    background: rgba(255, 68, 68, .12);
+    border: 2px solid rgba(255, 68, 68, .4)
+  }
+
+  .pt-label {
+    font-size: .75rem;
+    font-weight: 700;
+    margin-bottom: .4rem;
+    letter-spacing: .3px
+  }
+
+  .pt-status {
+    font-size: 1.1rem;
+    margin-bottom: .3rem
+  }
+
+  .pt-desc {
+    color: rgba(255, 255, 255, .55);
+    font-size: .75rem;
+    line-height: 1.5
+  }
+
+  .pt-detail {
+    color: rgba(255, 255, 255, .35);
+    font-size: .7rem;
+    margin-top: .3rem
+  }
+
+  .dosha-item {
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: .8rem
+  }
+
+  .dosha-critical {
+    background: rgba(255, 68, 68, .1);
+    border: 1px solid rgba(255, 68, 68, .3)
+  }
+
+  .dosha-high {
+    background: rgba(255, 165, 0, .08);
+    border: 1px solid rgba(255, 165, 0, .25)
+  }
+
+  .dosha-medium {
+    background: rgba(255, 215, 0, .06);
+    border: 1px solid rgba(255, 215, 0, .2)
+  }
+</style>
+
+{% endblock %}
+{% block extra_js %}
+<script>
+  const LANG = "{{ language }}";
+
+  async function calculateCompatibility() {
+    const dob1 = document.getElementById('compatDob1').value;
+    const time1 = document.getElementById('compatTime1').value;
+    const dob2 = document.getElementById('compatDob2').value;
+    const time2 = document.getElementById('compatTime2').value;
+    if (!dob1 || !time1 || !dob2 || !time2) { showAlert('Please fill all 4 fields', 'error'); return; }
+    const btn = document.getElementById('compatBtn');
+    btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Calculating...';
+    try {
+      const res = await fetch('/api/calculate-compatibility', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ dob1, time1, dob2, time2 })
+      });
+      const data = await res.json();
+      btn.disabled = false; btn.innerHTML = '<i class="fas fa-heart"></i> ' + (LANG === 'ta' ? 'பொருத்தம் பார்க்க' : 'Check Compatibility');
+      if (!data.success) { showAlert('Error: ' + (data.error || 'Failed'), 'error'); return; }
+      renderResult(data.result);
+    } catch (e) {
+      btn.disabled = false; btn.innerHTML = '<i class="fas fa-heart"></i> Check Compatibility';
+      showAlert('Error: ' + e.message, 'error');
+    }
+  }
+
+  function renderResult(r) {
+    document.getElementById('compatResult').style.display = 'block';
+    document.getElementById('compatScore').textContent = r.matched + '/' + r.total;
+    document.getElementById('compatPct').textContent = r.percentage + '%';
+    const vEl = document.getElementById('compatVerdict');
+    vEl.textContent = r.verdict;
+    vEl.style.color = r.matched >= 9 ? '#44BB44' : r.matched >= 7 ? '#FFD700' : '#FF6644';
+
+    // Person summaries
+    if (r.chart1) {
+      document.getElementById('girl_summary').innerHTML =
+        `<div style="color:#FFD700;font-weight:600;margin-bottom:.4rem">👰 Girl</div>
+       <div style="font-size:.82rem;color:rgba(255,255,255,.7)">🌙 ${r.chart1.rasi}</div>
+       <div style="font-size:.82rem;color:rgba(255,255,255,.7)">⭐ ${r.chart1.nakshatra}</div>
+       <div style="font-size:.75rem;color:rgba(255,215,0,.5);margin-top:.3rem">Rajju: ${r.chart1.rajju} • Nadi: ${r.chart1.nadi}</div>`;
+    }
+    if (r.chart2) {
+      document.getElementById('boy_summary').innerHTML =
+        `<div style="color:#FF69B4;font-weight:600;margin-bottom:.4rem">🤵 Boy</div>
+       <div style="font-size:.82rem;color:rgba(255,255,255,.7)">🌙 ${r.chart2.rasi}</div>
+       <div style="font-size:.82rem;color:rgba(255,255,255,.7)">⭐ ${r.chart2.nakshatra}</div>
+       <div style="font-size:.75rem;color:rgba(255,105,180,.5);margin-top:.3rem">Rajju: ${r.chart2.rajju} • Nadi: ${r.chart2.nadi}</div>`;
+    }
+
+    // All poruthams
+    const grid = document.getElementById('poruthamGrid'); grid.innerHTML = '';
+    if (r.results) {
+      Object.entries(r.results).forEach(([key, p]) => {
+        const isCritical = key === 'rajju' && !p.ok;
+        const cls = isCritical ? 'porutham-card critical-fail' : p.ok ? 'porutham-card match' : 'porutham-card no-match';
+        const label = LANG === 'ta' ? p.label_ta : p.label_en;
+        const imp = p.importance === 'Critical' ? '🔴' : p.importance === 'High' ? '🟡' : '🟢';
+        const card = document.createElement('div');
+        card.className = cls;
+        card.innerHTML = `
+        <div class="pt-label" style="color:${p.ok ? '#44BB44' : '#FF6644'}">${imp} ${label}</div>
+        <div class="pt-status">${p.ok ? '✅ உள்ளது' : '❌ இல்லை'}</div>
+        <div class="pt-desc">${p.desc}</div>
+        <div class="pt-detail">${p.detail || ''}</div>`;
+        grid.appendChild(card);
+      });
+    }
+
+    // Doshas
+    const dl = document.getElementById('doshaList');
+    if (r.doshas && r.doshas.length) {
+      dl.innerHTML = r.doshas.map(d => {
+        const cls = d.severity === 'Critical' ? 'dosha-critical' : d.severity === 'High' ? 'dosha-high' : 'dosha-medium';
+        return `<div class="dosha-item ${cls}">
+        <div style="font-weight:700;color:#FFD700;margin-bottom:.4rem">⚠️ ${d.name} <span style="font-size:.75rem;opacity:.7">(${d.severity})</span></div>
+        <div style="color:rgba(255,255,255,.65);font-size:.85rem;margin-bottom:.5rem">${d.effect}</div>
+        <div style="color:rgba(255,215,0,.7);font-size:.82rem"><strong>Remedy:</strong> ${d.remedy}</div>
+      </div>`;
+      }).join('');
+    } else {
+      dl.innerHTML = '<div style="color:#44BB44;padding:1rem">✅ No major doshas! This is a blessed match.</div>';
+    }
+    document.getElementById('compatResult').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+</script>
+{% endblock %}
