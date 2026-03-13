@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="breadcrumb">
+  <a href="/">{% if language=='ta' %}முகப்பு{% else %}Home{% endif %}</a>
+  <span class="breadcrumb-sep">›</span>
+  <span class="breadcrumb-current">{% if language=='ta' %}என் சுயவிவரம்{% else %}My Profile{% endif %}</span>
+</div>
+
+<section class="profile-page">
+  <div class="profile-page-container">
+
+    {% if success %}<div class="alert-success">✅ {{ success }}</div>{% endif %}
+    {% if error %}<div class="alert-error">⚠️ {{ error }}</div>{% endif %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for cat, msg in messages %}<div class="alert-{{ cat }}">{{ msg }}</div>{% endfor %}
+    {% endwith %}
+
+    <!-- Profile Header -->
+    <div class="profile-hero">
+      <div class="profile-avatar-large">{{ user.name[0].upper() }}</div>
+      <div class="profile-hero-info">
+        <h1 class="profile-hero-name">{{ user.name }}</h1>
+        <p class="profile-hero-email">{{ user.email }}</p>
+        <p class="profile-hero-since">{% if language=='ta' %}உறுப்பினர் since{% else %}Member since{% endif %} {{ user.created_at.strftime('%B %Y') }}</p>
+      </div>
+    </div>
+
+    <div class="profile-tabs-grid">
+
+      <!-- Update Profile -->
+      <div class="profile-section-card">
+        <h3 class="card-section-title">{% if language=='ta' %}சுயவிவரம் திருத்து{% else %}Edit Profile{% endif %}</h3>
+        <form method="POST">
+          <input type="hidden" name="action" value="update_profile">
+          <div class="form-group">
+            <label class="form-label">{% if language=='ta' %}பெயர்{% else %}Name{% endif %}</label>
+            <input type="text" name="name" class="form-input" value="{{ user.name }}" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">{% if language=='ta' %}பாலினம்{% else %}Gender{% endif %}</label>
+            <select name="gender" class="form-input">
+              <option value="Male" {% if user.gender=='Male' %}selected{% endif %}>{% if language=='ta' %}ஆண்{% else %}Male{% endif %}</option>
+              <option value="Female" {% if user.gender=='Female' %}selected{% endif %}>{% if language=='ta' %}பெண்{% else %}Female{% endif %}</option>
+              <option value="Other" {% if user.gender=='Other' %}selected{% endif %}>{% if language=='ta' %}மற்றவை{% else %}Other{% endif %}</option>
+            </select>
+          </div>
+          <button type="submit" class="btn-primary-sm">{% if language=='ta' %}சேமி{% else %}Save Changes{% endif %}</button>
+        </form>
+      </div>
+
+      <!-- Change Password -->
+      <div class="profile-section-card">
+        <h3 class="card-section-title">{% if language=='ta' %}கடவுச்சொல் மாற்று{% else %}Change Password{% endif %}</h3>
+        <form method="POST">
+          <input type="hidden" name="action" value="change_password">
+          <div class="form-group">
+            <label class="form-label">{% if language=='ta' %}தற்போதைய கடவுச்சொல்{% else %}Current Password{% endif %}</label>
+            <input type="password" name="old_password" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">{% if language=='ta' %}புதிய கடவுச்சொல்{% else %}New Password{% endif %}</label>
+            <input type="password" name="new_password" class="form-input" required minlength="8">
+          </div>
+          <div class="form-group">
+            <label class="form-label">{% if language=='ta' %}உறுதி செய்{% else %}Confirm New{% endif %}</label>
+            <input type="password" name="confirm_password" class="form-input" required>
+          </div>
+          <button type="submit" class="btn-primary-sm">{% if language=='ta' %}கடவுச்சொல் மாற்று{% else %}Update Password{% endif %}</button>
+        </form>
+      </div>
+
+      <!-- Preferences -->
+      <div class="profile-section-card">
+        <h3 class="card-section-title">{% if language=='ta' %}விருப்பங்கள்{% else %}Preferences{% endif %}</h3>
+        <div class="pref-row">
+          <span>{% if language=='ta' %}இருண்ட பயன்முறை{% else %}Dark Mode{% endif %}</span>
+          <label class="toggle-switch">
+            <input type="checkbox" id="darkModeToggle" {% if user.dark_mode %}checked{% endif %} onchange="toggleDarkMode()">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Saved Charts -->
+    <div class="saved-charts-section">
+      <h3 class="section-title-sm">{% if language=='ta' %}சேமிக்கப்பட்ட ஜாதகங்கள்{% else %}Saved Birth Charts{% endif %}</h3>
+      {% if charts %}
+      <div class="charts-grid">
+        {% for ch in charts %}
+        <div class="chart-saved-card">
+          <div class="chart-saved-name">{{ ch.full_name or ch.label }}</div>
+          <div class="chart-saved-meta">{{ ch.dob }} • {{ ch.birth_time }} • {{ ch.birth_place }}</div>
+          <div class="chart-saved-actions">
+            <form method="POST" style="display:inline">
+              <input type="hidden" name="action" value="delete_chart">
+              <input type="hidden" name="chart_id" value="{{ ch.id }}">
+              <button type="submit" class="btn-danger-sm" onclick="return confirm('Delete this chart?')">🗑️ {% if language=='ta' %}நீக்கு{% else %}Delete{% endif %}</button>
+            </form>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <p class="text-muted">{% if language=='ta' %}இன்னும் ஜாதகம் சேமிக்கப்படவில்லை{% else %}No charts saved yet. Generate one from the home page!{% endif %}</p>
+      {% endif %}
+    </div>
+
+  </div>
+</section>
+
+<script>
+function toggleDarkMode() {
+  fetch('/auth/profile', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+    body: 'action=toggle_dark'
+  }).then(r => r.json()).then(data => {
+    document.body.classList.toggle('dark-mode', data.dark_mode);
+  });
+}
+</script>
+{% endblock %}

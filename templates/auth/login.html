@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="auth-container">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="auth-icon">🌟</div>
+      <h1 class="auth-title">{% if language=='ta' %}உள்நுழைவு{% else %}Sign In{% endif %}</h1>
+      <p class="auth-subtitle">{% if language=='ta' %}உங்கள் ஜோதிட நண்பனிடம் திரும்பி வரவேற்கிறோம்{% else %}Welcome back to your cosmic companion{% endif %}</p>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for cat, msg in messages %}
+        <div class="auth-alert auth-alert-{{ 'success' if cat=='success' else 'info' if cat=='info' else 'error' }}">{{ msg }}</div>
+      {% endfor %}
+    {% endwith %}
+
+    {% if error %}
+    <div class="auth-alert auth-alert-error">⚠️ {{ error }}</div>
+    {% endif %}
+
+    <form method="POST" class="auth-form">
+      <div class="form-group">
+        <label class="form-label">{% if language=='ta' %}மின்னஞ்சல்{% else %}Email Address{% endif %}</label>
+        <input type="email" name="email" class="form-input" required placeholder="your@email.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">{% if language=='ta' %}கடவுச்சொல்{% else %}Password{% endif %}</label>
+        <input type="password" name="password" class="form-input" required placeholder="Your password">
+      </div>
+      <div class="form-group form-row">
+        <label class="form-check">
+          <input type="checkbox" name="remember"> {% if language=='ta' %}என்னை நினைவில் வை{% else %}Remember me{% endif %}
+        </label>
+        <a href="{{ url_for('auth.forgot_password') }}" class="auth-link-small">{% if language=='ta' %}கடவுச்சொல் மறந்தீர்களா?{% else %}Forgot password?{% endif %}</a>
+      </div>
+      <button type="submit" class="auth-btn">
+        🚀 {% if language=='ta' %}உள்நுழை{% else %}Sign In{% endif %}
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      {% if language=='ta' %}கணக்கு இல்லையா?{% else %}Don't have an account?{% endif %}
+      <a href="{{ url_for('auth.register') }}" class="auth-link">{% if language=='ta' %}புதிய கணக்கு{% else %}Sign Up Free{% endif %}</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

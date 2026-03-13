@@ -1,0 +1,332 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="breadcrumb">
+  <a href="/">{% if language=='ta' %}முகப்பு{% else %}Home{% endif %}</a>
+  <span class="breadcrumb-sep">›</span>
+  <span class="breadcrumb-current">{% if language=='ta' %}உதவி & FAQ{% else %}Help & FAQ{% endif %}</span>
+</div>
+
+<section class="help-section">
+  <div class="help-container">
+
+    <!-- Page Title -->
+    <div class="help-hero">
+      <div class="help-hero-icon">🔮</div>
+      <h1 class="help-hero-title">{% if language=='ta' %}உதவி மையம்{% else %}Help Center{% endif %}</h1>
+      <p class="help-hero-sub">{% if language=='ta' %}அடிக்கடி கேட்கப்படும் கேள்விகள் & வழிகாட்டுதல்{% else %}Frequently Asked Questions & Guidance{% endif %}</p>
+    </div>
+
+    <!-- Quick Nav -->
+    <div class="faq-quick-nav">
+      <a href="#getting-started" class="faq-nav-pill">🚀 {% if language=='ta' %}தொடக்கம்{% else %}Getting Started{% endif %}</a>
+      <a href="#birth-chart" class="faq-nav-pill">📊 {% if language=='ta' %}ஜாதகம்{% else %}Birth Chart{% endif %}</a>
+      <a href="#astrology" class="faq-nav-pill">⭐ {% if language=='ta' %}ஜோதிடம்{% else %}Astrology{% endif %}</a>
+      <a href="#compatibility" class="faq-nav-pill">💑 {% if language=='ta' %}பொருத்தம்{% else %}Compatibility{% endif %}</a>
+      <a href="#account" class="faq-nav-pill">👤 {% if language=='ta' %}கணக்கு{% else %}Account{% endif %}</a>
+    </div>
+
+    <!-- Getting Started -->
+    <div class="faq-group" id="getting-started">
+      <h2 class="faq-group-title">🚀 {% if language=='ta' %}தொடக்கம்{% else %}Getting Started{% endif %}</h2>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          {% if language=='ta' %}AstroGuy AI என்றால் என்ன?{% else %}What is AstroGuy AI?{% endif %}
+          <span class="faq-arrow">▼</span>
+        </button>
+        <div class="faq-answer">
+          {% if language=='ta' %}
+          AstroGuy AI என்பது Vedic ஜோதிடத்தை அடிப்படையாகக் கொண்ட ஒரு AI-இயக்கும் ஜோதிட தளம். இது உங்கள் பிறந்த தேதி, நேரம் மற்றும் இடத்தை கொண்டு உங்கள் ஜாதகம், ராசி பலன், பஞ்சாங்கம் மற்றும் பொருத்தம் கணக்கிடுகிறது.
+          {% else %}
+          AstroGuy AI is an AI-powered Vedic astrology platform that calculates your birth chart (Jatakam), horoscope (Rasi Palangal), Panchangam, and compatibility (Porutham) using ancient Jyotish formulas combined with modern technology.
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          {% if language=='ta' %}எனக்கு என்ன தகவல் தேவை?{% else %}What information do I need to get started?{% endif %}
+          <span class="faq-arrow">▼</span>
+        </button>
+        <div class="faq-answer">
+          {% if language=='ta' %}
+          <strong>தேவையான தகவல்கள்:</strong><br>
+          • பிறந்த தேதி (YYYY-MM-DD)<br>
+          • பிறந்த நேரம் (HH:MM — 24 மணி நேரம்)<br>
+          • பிறந்த இடம் (நகரம், மாவட்டம், நாடு)<br>
+          • பெயர் மற்றும் பாலினம் (விருப்பம்)
+          {% else %}
+          <strong>You need:</strong><br>
+          • Date of birth (YYYY-MM-DD format)<br>
+          • Exact birth time (HH:MM in 24-hour format)<br>
+          • Birth place (city, state, country)<br>
+          • Name and gender (optional but recommended)<br><br>
+          <em>The more accurate your birth time, the more precise your Lagna (Ascendant) calculation.</em>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          {% if language=='ta' %}பதிவு இல்லாமல் பயன்படுத்தலாமா?{% else %}Can I use it without registering?{% endif %}
+          <span class="faq-arrow">▼</span>
+        </button>
+        <div class="faq-answer">
+          {% if language=='ta' %}
+          ஆம்! Horoscope, Chat, Panchangam, Videos பகுதிகள் பதிவு இல்லாமல் கூட பயன்படுத்தலாம். ஆனால் உங்கள் ஜாதகத்தை சேமிக்கவும், PDF பதிவிறக்கவும் கணக்கு தேவை.
+          {% else %}
+          Yes! You can explore horoscopes, the AI chat, Panchangam, and videos without registering. However, to save your birth chart, download PDF reports, and access personalized predictions, you'll need to create a free account.
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Birth Chart -->
+    <div class="faq-group" id="birth-chart">
+      <h2 class="faq-group-title">📊 {% if language=='ta' %}ஜாதக கணக்கீடு{% else %}Birth Chart Calculation{% endif %}</h2>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          {% if language=='ta' %}Lagna (லக்னம்) என்றால் என்ன?{% else %}What is Lagna (Ascendant)?{% endif %}
+          <span class="faq-arrow">▼</span>
+        </button>
+        <div class="faq-answer">
+          {% if language=='ta' %}
+          லக்னம் என்பது நீங்கள் பிறந்த நேரத்தில் கிழக்கு எல்லையில் உதித்த ராசிக்கான பண்பு. இது உங்கள் உடல், ஆளுமை மற்றும் வாழ்க்கை திசையை குறிக்கிறது. சரியான நேரமும் இடமும் இல்லாமல் லக்னத்தை சரியாக கணக்கிட இயலாது.
+          {% else %}
+          The Lagna is the zodiac sign rising on the eastern horizon at your exact birth time and place. It represents your physical body, personality, and overall life direction. This is why accurate birth time and place are crucial — the Lagna changes every 2 hours!
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          {% if language=='ta' %}Dasha (தசை) என்றால் என்ன?{% else %}What are Dasha periods?{% endif %}
+          <span class="faq-arrow">▼</span>
+        </button>
+        <div class="faq-answer">
+          {% if language=='ta' %}
+          Vimshottari Dasha என்பது 120 ஆண்டுகள் கொண்ட ஒரு கிரக காலவரிசை. ஒவ்வொரு கிரகமும் குறிப்பிட்ட ஆண்டுகளுக்கு உங்கள் வாழ்க்கையை நிர்வகிக்கிறது. Ketu-7 ஆண்டுகள், Venus-20 ஆண்டுகள், Sun-6 ஆண்டுகள், Moon-10 ஆண்டுகள் என்று மாறுகிறது.
+          {% else %}
+          Vimshottari Dasha is a 120-year planetary period system. Each planet rules your life for a specific number of years: Ketu 7 yrs → Venus 20 yrs → Sun 6 yrs → Moon 10 yrs → Mars 7 yrs → Rahu 18 yrs → Jupiter 16 yrs → Saturn 19 yrs → Mercury 17 yrs. Your birth Nakshatra determines which Dasha you start in.
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          {% if language=='ta' %}என் ஜாதகம் எத்தனை சரியானது?{% else %}How accurate is my birth chart?{% endif %}
+          <span class="faq-arrow">▼</span>
+        </button>
+        <div class="faq-answer">
+          {% if language=='ta' %}
+          AstroGuy AI Lahiri Ayanamsa மற்றும் ephem நூலகத்தை பயன்படுத்தி துல்லியமான கிரக நிலைகளை கணக்கிடுகிறது. Geographic coordinates மூலம் சரியான Lagna கணக்கிடப்படுகிறது. சாதாரண பயன்பாட்டிற்கு இது மிகவும் சரியானது.
+          {% else %}
+          AstroGuy AI uses the <strong>Lahiri Ayanamsa</strong> (the standard for Vedic astrology) and the <strong>ephem</strong> astronomy library for precise planetary positions. Geographic coordinates are resolved via Nominatim for accurate Lagna calculation. For major life decisions, always consult a qualified human astrologer.
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Astrology Concepts -->
+    <div class="faq-group" id="astrology">
+      <h2 class="faq-group-title">⭐ {% if language=='ta' %}வேத ஜோதிட அடிப்படை{% else %}Vedic Astrology Basics{% endif %}</h2>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          {% if language=='ta' %}27 நட்சத்திரங்கள் என்னவென்று விளக்குங்கள்{% else %}What are the 27 Nakshatras?{% endif %}
+          <span class="faq-arrow">▼</span>
+        </button>
+        <div class="faq-answer">
+          {% if language=='ta' %}
+          நட்சத்திரங்கள் 360° சுற்றை 27 சம பகுதிகளாக பிரிக்கின்றன (ஒவ்வொன்றும் 13°20'). சந்திரன் எந்த நட்சத்திரத்தில் இருக்கிறதோ அதுவே உங்கள் நட்சத்திரம். இது உங்கள் ஆழமான ஆளுமை, அதிர்ஷ்டம் மற்றும் தசை வரிசையை தீர்மானிக்கிறது.
+          {% else %}
+          The 27 Nakshatras divide the 360° zodiac into 27 equal segments of 13°20' each. The Nakshatra occupied by your Moon at birth is your birth star. It determines your deeper personality traits, compatibility, and Dasha sequence. Each Nakshatra has 4 Padas (quarters) making 108 total divisions.
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          {% if language=='ta' %}Ayanamsa என்றால் என்ன?{% else %}What is Ayanamsa?{% endif %}
+          <span class="faq-arrow">▼</span>
+        </button>
+        <div class="faq-answer">
+          {% if language=='ta' %}
+          Ayanamsa என்பது வெப்பமண்டல (tropical) மற்றும் நாட்சத்திர (sidereal) ராசிக்கட்டங்களுக்கு இடையேயான வித்தியாசம். Vedic ஜோதிடம் Lahiri ayanamsa (~24°) பயன்படுத்துகிறது, இது Earth's precession (அயன சலனம்) ஆல் ஏற்படுகிறது.
+          {% else %}
+          Ayanamsa is the angular difference between the tropical zodiac (used in Western astrology) and the sidereal zodiac (used in Vedic astrology). AstroGuy uses <strong>Lahiri Ayanamsa</strong> (~24° currently), which accounts for Earth's precession of the equinoxes over thousands of years.
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          {% if language=='ta' %}9 கிரகங்களும் என்ன?{% else %}What are the 9 planets (Navagrahas)?{% endif %}
+          <span class="faq-arrow">▼</span>
+        </button>
+        <div class="faq-answer">
+          <div class="planet-grid">
+            <div class="planet-item"><span class="planet-sym">☀️</span><strong>Sun (Surya)</strong> — Soul, father, authority</div>
+            <div class="planet-item"><span class="planet-sym">🌙</span><strong>Moon (Chandra)</strong> — Mind, mother, emotions</div>
+            <div class="planet-item"><span class="planet-sym">🔴</span><strong>Mars (Mangal)</strong> — Energy, siblings, property</div>
+            <div class="planet-item"><span class="planet-sym">💚</span><strong>Mercury (Budha)</strong> — Intelligence, business, speech</div>
+            <div class="planet-item"><span class="planet-sym">🟡</span><strong>Jupiter (Guru)</strong> — Wisdom, wealth, children</div>
+            <div class="planet-item"><span class="planet-sym">💗</span><strong>Venus (Shukra)</strong> — Love, luxury, arts</div>
+            <div class="planet-item"><span class="planet-sym">🔵</span><strong>Saturn (Shani)</strong> — Karma, discipline, longevity</div>
+            <div class="planet-item"><span class="planet-sym">🟣</span><strong>Rahu (N. Node)</strong> — Obsession, technology, foreign</div>
+            <div class="planet-item"><span class="planet-sym">⚫</span><strong>Ketu (S. Node)</strong> — Spirituality, detachment, past life</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Compatibility -->
+    <div class="faq-group" id="compatibility">
+      <h2 class="faq-group-title">💑 {% if language=='ta' %}திருமண பொருத்தம்{% else %}Marriage Compatibility{% endif %}</h2>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          {% if language=='ta' %}Rajju பொருத்தம் ஏன் மிக முக்கியம்?{% else %}Why is Rajju Porutham so important?{% endif %}
+          <span class="faq-arrow">▼</span>
+        </button>
+        <div class="faq-answer">
+          {% if language=='ta' %}
+          Rajju பொருத்தம் Vedic திருமண பொருத்தத்தில் மிக முக்கியமான ஒன்று. இது கணவனின் ஆயுளுடன் தொடர்புடையது. Rajju தோஷம் இருந்தால், பரிகாரங்கள் செய்த பிறகே திருமணம் செய்துகொள்வது நல்லது.
+          {% else %}
+          Rajju Porutham is considered the most critical of all poruthams in South Indian Vedic tradition. The 5 Rajju groups (Sirasu, Kanta, Nabhi, Kati, Pada) each affect different aspects — the most serious being Sirasu Rajju which affects the husband's longevity. Knowledgeable astrologers can identify remedies to mitigate this dosha.
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          {% if language=='ta' %}நாடி தோஷம் என்றால் என்ன?{% else %}What is Nadi Dosha?{% endif %}
+          <span class="faq-arrow">▼</span>
+        </button>
+        <div class="faq-answer">
+          {% if language=='ta' %}
+          நாடி தோஷம் என்பது இருவரும் ஒரே நாடியில் (Vata, Pitta, அல்லது Kapha) பிறந்திருக்கும்போது ஏற்படுகிறது. இது குழந்தைகளின் ஆரோக்கியத்தை பாதிக்கலாம். Nadi Nivarana Puja செய்வதன் மூலம் இந்த தோஷத்தை குறைக்கலாம்.
+          {% else %}
+          Nadi Dosha occurs when both partners share the same Nadi (Vata/Pitta/Kapha — based on their birth Nakshatra). It indicates potential health issues for children and genetic incompatibility. The Nadi Nivarana Puja and specific charitable acts are recommended as remedies.
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Account -->
+    <div class="faq-group" id="account">
+      <h2 class="faq-group-title">👤 {% if language=='ta' %}கணக்கு & தனியுரிமை{% else %}Account & Privacy{% endif %}</h2>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          {% if language=='ta' %}என் தகவல் பாதுகாப்பாக இருக்குமா?{% else %}Is my data safe?{% endif %}
+          <span class="faq-arrow">▼</span>
+        </button>
+        <div class="faq-answer">
+          {% if language=='ta' %}
+          ஆம். உங்கள் கடவுச்சொல் bcrypt கொண்டு hash செய்யப்படுகிறது. உங்கள் ஜாதக தகவல்கள் பாதுகாப்பான database-ல் சேமிக்கப்படுகின்றன. உங்கள் தகவல் எந்த மூன்றாம் தரப்பிற்கும் பகிரப்படுவதில்லை.
+          {% else %}
+          Yes. Your password is hashed using <strong>bcrypt</strong> and never stored in plain text. Birth chart data is stored securely in the database ONLY for you to access via your account. We never share personal data with third parties.
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          {% if language=='ta' %}கடவுச்சொல் மறந்தால் என்ன செய்வது?{% else %}What if I forget my password?{% endif %}
+          <span class="faq-arrow">▼</span>
+        </button>
+        <div class="faq-answer">
+          {% if language=='ta' %}
+          Login பக்கத்தில் "கடவுச்சொல் மறந்தீர்களா?" இணைப்பை கிளிக் செய்யுங்கள். உங்கள் மின்னஞ்சலை உள்ளிட்டால் reset link கிடைக்கும் (1 மணி நேரம் செல்லுபடியாகும்).
+          {% else %}
+          Click "Forgot password?" on the login page. Enter your email and you'll receive a password reset link. The link expires in 1 hour for security.
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Feedback Section -->
+    <div class="feedback-section" id="feedback">
+      <h2 class="faq-group-title">💬 {% if language=='ta' %}கருத்துக்கள் & தொடர்பு{% else %}Feedback & Contact{% endif %}</h2>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for cat, msg in messages %}
+          <div class="alert-{{ cat }} mb-20">{{ msg }}</div>
+        {% endfor %}
+      {% endwith %}
+
+      <div class="feedback-card">
+        <p class="feedback-intro">{% if language=='ta' %}உங்கள் கருத்துக்கள் AstroGuy AI-ஐ மேம்படுத்த உதவுகின்றன. கீழே உங்கள் கருத்தை பகிரவும்.{% else %}Your feedback helps us improve AstroGuy AI. Share your thoughts below!{% endif %}</p>
+        <form method="POST" action="/api/feedback" class="feedback-form">
+          <div class="form-group">
+            <label class="form-label">{% if language=='ta' %}மதிப்பீடு{% else %}Rating{% endif %}</label>
+            <div class="star-rating">
+              {% for i in range(1, 6) %}
+              <input type="radio" name="rating" id="star{{i}}" value="{{i}}" {% if i==5 %}required{% endif %}>
+              <label for="star{{i}}" class="star-label">★</label>
+              {% endfor %}
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">{% if language=='ta' %}வகை{% else %}Category{% endif %}</label>
+            <select name="category" class="form-input">
+              <option value="general">{% if language=='ta' %}பொதுவான{% else %}General{% endif %}</option>
+              <option value="bug">{% if language=='ta' %}பிழை{% else %}Bug / Issue{% endif %}</option>
+              <option value="feature">{% if language=='ta' %}புதிய அம்சம்{% else %}Feature Request{% endif %}</option>
+              <option value="accuracy">{% if language=='ta' %}துல்லியம்{% else %}Accuracy{% endif %}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">{% if language=='ta' %}செய்தி{% else %}Message{% endif %}</label>
+            <textarea name="message" class="form-input" rows="4" required placeholder="{% if language=='ta' %}உங்கள் கருத்தை இங்கே பதிவிடுங்கள்...{% else %}Share your experience, suggestions, or report issues...{% endif %}"></textarea>
+          </div>
+          <button type="submit" class="auth-btn">
+            📨 {% if language=='ta' %}கருத்து அனுப்பு{% else %}Submit Feedback{% endif %}
+          </button>
+        </form>
+      </div>
+
+      <!-- Testimonials -->
+      <div class="testimonials">
+        <h3 class="testimonial-title">{% if language=='ta' %}பயனர் கருத்துக்கள்{% else %}User Testimonials{% endif %}</h3>
+        <div class="testimonial-grid">
+          <div class="testimonial-card">
+            <div class="testimonial-stars">★★★★★</div>
+            <p class="testimonial-text">"Absolutely accurate! My Nakshatra prediction was spot-on. The compatibility tool saved my family a lot of confusion!"</p>
+            <div class="testimonial-author">— Priya R., Chennai</div>
+          </div>
+          <div class="testimonial-card">
+            <div class="testimonial-stars">★★★★★</div>
+            <p class="testimonial-text">"தமிழ் மொழியில் ஜோதிட பலன்கள் பெற முடிவது மிகவும் சிறந்தது. AstroGuy AI அருமை!"</p>
+            <div class="testimonial-author">— மணிகண்டன், கோயம்புத்தூர்</div>
+          </div>
+          <div class="testimonial-card">
+            <div class="testimonial-stars">★★★★☆</div>
+            <p class="testimonial-text">"The Dasha predictions were very helpful for career planning. The PDF report is beautifully designed."</p>
+            <div class="testimonial-author">— Suresh K., Bangalore</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script>
+function toggleFaq(btn) {
+  const answer = btn.nextElementSibling;
+  const arrow  = btn.querySelector('.faq-arrow');
+  const isOpen = answer.style.display === 'block';
+  // Close all
+  document.querySelectorAll('.faq-answer').forEach(a => a.style.display = 'none');
+  document.querySelectorAll('.faq-arrow').forEach(a => a.textContent = '▼');
+  // Open clicked if was closed
+  if (!isOpen) {
+    answer.style.display = 'block';
+    arrow.textContent = '▲';
+  }
+}
+</script>
+{% endblock %}

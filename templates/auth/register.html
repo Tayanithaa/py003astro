@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="auth-container">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="auth-icon">🔮</div>
+      <h1 class="auth-title">{% if language=='ta' %}புதிய கணக்கு{% else %}Create Account{% endif %}</h1>
+      <p class="auth-subtitle">{% if language=='ta' %}உங்கள் விண்வெளி பயணத்தை தொடங்குங்கள்{% else %}Begin your cosmic journey{% endif %}</p>
+    </div>
+
+    {% if error %}
+    <div class="auth-alert auth-alert-error">⚠️ {{ error }}</div>
+    {% endif %}
+
+    <form method="POST" class="auth-form">
+      <div class="form-group">
+        <label class="form-label">{% if language=='ta' %}முழு பெயர்{% else %}Full Name{% endif %}</label>
+        <input type="text" name="name" class="form-input" required placeholder="{% if language=='ta' %}உங்கள் பெயர்{% else %}Your full name{% endif %}">
+      </div>
+      <div class="form-group">
+        <label class="form-label">{% if language=='ta' %}மின்னஞ்சல்{% else %}Email Address{% endif %}</label>
+        <input type="email" name="email" class="form-input" required placeholder="your@email.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">{% if language=='ta' %}பாலினம்{% else %}Gender{% endif %}</label>
+        <select name="gender" class="form-input">
+          <option value="">{% if language=='ta' %}தேர்ந்தெடு{% else %}Select{% endif %}</option>
+          <option value="Male">{% if language=='ta' %}ஆண்{% else %}Male{% endif %}</option>
+          <option value="Female">{% if language=='ta' %}பெண்{% else %}Female{% endif %}</option>
+          <option value="Other">{% if language=='ta' %}மற்றவை{% else %}Other{% endif %}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">{% if language=='ta' %}கடவுச்சொல்{% else %}Password{% endif %}</label>
+        <input type="password" name="password" class="form-input" required placeholder="Min 8 characters" minlength="8">
+      </div>
+      <div class="form-group">
+        <label class="form-label">{% if language=='ta' %}கடவுச்சொல் உறுதிப்படுத்தல்{% else %}Confirm Password{% endif %}</label>
+        <input type="password" name="confirm_password" class="form-input" required placeholder="Repeat password">
+      </div>
+      <button type="submit" class="auth-btn">
+        ✨ {% if language=='ta' %}கணக்கு உருவாக்கு{% else %}Create Account{% endif %}
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      {% if language=='ta' %}ஏற்கனவே கணக்கு உள்ளதா?{% else %}Already have an account?{% endif %}
+      <a href="{{ url_for('auth.login') }}" class="auth-link">{% if language=='ta' %}உள்நுழை{% else %}Sign In{% endif %}</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

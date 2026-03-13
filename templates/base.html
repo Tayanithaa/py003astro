@@ -14,7 +14,7 @@
     {% block extra_css %}{% endblock %}
 </head>
 
-<body>
+<body class="{% if current_user.is_authenticated and current_user.dark_mode %}dark-mode{% endif %}">
     <div class="stars-bg" id="starsBg"></div>
     <div class="loading-screen" id="loadingScreen">
         <div class="cosmic-loader">
@@ -160,10 +160,55 @@
                     <span>{% if language=='ta' %}வீடியோக்கள்{% else %}Videos{% endif %}</span>
                 </a>
             </div>
+
+            <!-- Help Section -->
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">
+                    <i class="fas fa-question-circle"></i>
+                    <span>{% if language=='ta' %}உதவி{% else %}Support{% endif %}</span>
+                </div>
+                <a href="/help" class="sidebar-link {% if request.path in ['/help','/faq'] %}active{% endif %}">
+                    <i class="fas fa-book-open"></i>
+                    <span>{% if language=='ta' %}உதவி & FAQ{% else %}Help & FAQ{% endif %}</span>
+                </a>
+            </div>
+
+            <!-- Account Section -->
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">
+                    <i class="fas fa-user-circle"></i>
+                    <span>{% if language=='ta' %}கணக்கு{% else %}Account{% endif %}</span>
+                </div>
+                {% if current_user.is_authenticated %}
+                <a href="/auth/profile" class="sidebar-link {% if '/auth/profile' in request.path %}active{% endif %}">
+                    <i class="fas fa-id-badge"></i>
+                    <span>{% if language=='ta' %}சுயவிவரம்{% else %}My Profile{% endif %}</span>
+                </a>
+                <a href="/auth/logout" class="sidebar-link">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>{% if language=='ta' %}வெளியேறு{% else %}Logout{% endif %}</span>
+                </a>
+                {% else %}
+                <a href="/auth/login" class="sidebar-link {% if '/auth/login' in request.path %}active{% endif %}">
+                    <i class="fas fa-sign-in-alt"></i>
+                    <span>{% if language=='ta' %}உள்நுழை{% else %}Login{% endif %}</span>
+                </a>
+                <a href="/auth/register" class="sidebar-link {% if '/auth/register' in request.path %}active{% endif %}">
+                    <i class="fas fa-user-plus"></i>
+                    <span>{% if language=='ta' %}பதிவு செய்க{% else %}Register{% endif %}</span>
+                </a>
+                {% endif %}
+            </div>
         </div>
 
         <!-- Sidebar Footer -->
         <div class="sidebar-footer">
+            {% if current_user.is_authenticated %}
+            <div class="sidebar-user-info">
+                <i class="fas fa-user-circle"></i>
+                <span>{{ current_user.name }}</span>
+            </div>
+            {% endif %}
             <div class="sidebar-footer-stats">
                 <div class="stat-item">
                     <i class="fas fa-users"></i>
