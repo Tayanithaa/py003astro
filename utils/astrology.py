@@ -1,12 +1,71 @@
 """
-AstroGuy AI — Vedic Astrology Calculator
-Ported faithfully from the original working index.html JavaScript.
-Uses Lahiri ayanamsa, Julian Day calculations.
+AstroGuy AI — Vedic Astrology Calculator (Enhanced)
+Uses Lahiri ayanamsa, Julian Day calculations, ephem for precision,
+geopy for geographic coordinates, and pytz for timezone handling.
 """
 import math
-from typing import Dict
+import logging
+from datetime import datetime, timezone as tz
+from typing import Dict, Optional, Tuple
+
+logger = logging.getLogger(__name__)
+
+# ── Optional precision astronomy ───────────────────────────────────────────
+try:
+    import ephem
+    _EPHEM_AVAILABLE = True
+except ImportError:
+    _EPHEM_AVAILABLE = False
+
+try:
+    from geopy.geocoders import Nominatim
+    from geopy.exc import GeocoderTimedOut, GeocoderServiceError
+    _GEOPY_AVAILABLE = True
+except ImportError:
+    _GEOPY_AVAILABLE = False
+
+try:
+    import pytz
+    _PYTZ_AVAILABLE = True
+except ImportError:
+    _PYTZ_AVAILABLE = False
 
 J2000 = 2451545.0
+
+# ── Geographic lookup cache ────────────────────────────────────────────────
+_GEO_CACHE: Dict[str, Tuple[float, float, str]] = {}
+
+def get_coordinates(place: str) -> Tuple[float, float, str]:
+    """Return (latitude, longitude, timezone_str) for a place name.
+    Falls back to Chennai coordinates if lookup fails."""
+    if place in _GEO_CACHE:
+        return _GEO_CACHE[place]
+
+    lat, lon, tz_str = 13.0827, 80.2707, "Asia/Kolkata"  # Chennai default
+
+    if _GEOPY_AVAILABLE:
+        try:
+            geolocator = Nominatim(user_agent="astroguy_ai_v2", timeout=5)
+            location = geolocator.geocode(place, exactly_one=True)
+            if location:
+                lat = location.latitude
+                lon = location.longitude
+                # Determine timezone from coordinates
+                if _PYTZ_AVAILABLE:
+                    try:
+                        from timezonefinder import TimezoneFinder
+                        tf = TimezoneFinder()
+                        tz_str = tf.timezone_at(lng=lon, lat=lat) or "Asia/Kolkata"
+                    except Exception:
+                        # Estimate timezone from longitude
+                        offset_hrs = round(lon / 15)
+                        tz_str = f"Etc/GMT{-offset_hrs:+d}" if offset_hrs != 0 else "UTC"
+        except (GeocoderTimedOut, GeocoderServiceError, Exception) as e:
+            logger.warning(f"Geo lookup failed for '{place}': {e}")
+
+    result = (lat, lon, tz_str)
+    _GEO_CACHE[place] = result
+    return result
 
 RASIS = [
     {"number":1,"englishName":"Mesham","tamilName":"மேஷம்","symbol":"♈","lord":"Mars","element":"Fire"},
@@ -124,48 +183,138 @@ def _planet_lon(jd, planet):
     M = _norm(L - peri)
     return _norm(L + 2*inc*math.sin(_to_rad(M)))
 
-def calculate_birth_chart(year, month, day, hour, minute, place="Chennai"):
+def calculate_birth_chart(year, month, day, hour, minute, place="Chennai",
+                           latitude: Optional[float] = None,
+                           longitude: Optional[float] = None):
+    """Calculate Vedic birth chart with geographic precision.
+    Uses ephem for accurate planetary positions when available,
+    falls back to mathematical approximations.
+    """
+    # ── Resolve geographic coordinates ─────────────────────────────────────
+    if latitude is None or longitude is None:
+        geo_lat, geo_lon, geo_tz = get_coordinates(place)
+    else:
+        geo_lat, geo_lon, geo_tz = latitude, longitude, "Asia/Kolkata"
+
     jd = _julian_day(year, month, day, hour, minute)
     ay = _ayanamsa(year + (month-1)/12 + day/365)
-    moon_sid = _norm(_moon_longitude(jd) - ay)
-    sun_sid  = _norm(_sun_longitude(jd)  - ay)
-    moon_rasi= int(moon_sid/30)+1
-    sun_rasi = int(sun_sid/30)+1
-    nak_idx  = int(moon_sid/(360/27))
-    nak_pada = int((moon_sid % (360/27))/(360/108))+1
-    # Lagna calculation (simplified approximation matching original HTML)
-    # NOTE: This is approximate. Accurate lagna needs geographic lat/long and local sidereal time.
-    # Formula from original working code: sunSidereal + (hour - 6) * 15
-    # The -6 adjusts for local time (6 AM = 0° offset)
-    lagna_approx = _norm(sun_sid + (hour - 6 + minute/60) * 15)
-    lagna_r  = int(lagna_approx/30)+1
-    planets  = {}
-    for p in ["Mars","Mercury","Jupiter","Venus","Saturn"]:
-        l = _norm(_planet_lon(jd,p)-ay)
-        planets[p] = {"rasi":int(l/30)+1,"longitude":round(l,2)}
-    rahu_l = _norm(125.0445 - 1934.136*(jd-J2000)/36525 - ay)
-    rahu_r = int(rahu_l/30)+1
-    ketu_r = ((rahu_r+5)%12)+1
-    rasi   = RASIS[moon_rasi-1]
-    nak    = NAKSHATRAS[nak_idx]
-    lucky  = LUCKY.get(rasi["englishName"],{})
-    return {
-        "rasi":     {**rasi,"longitude":round(moon_sid,2)},
-        "nakshatra":{**nak,"index":nak_idx,"pada":nak_pada},
-        "lagna":    {**RASIS[lagna_r-1],"longitude":round(lagna_approx,2)},
-        "sun":      {"rasi":sun_rasi,"longitude":round(sun_sid,2)},
-        "moon":     {"rasi":moon_rasi,"longitude":round(moon_sid,2)},
-        "mars":     planets["Mars"],
-        "mercury":  planets["Mercury"],
-        "jupiter":  planets["Jupiter"],
-        "venus":    planets["Venus"],
-        "saturn":   planets["Saturn"],
-        "rahu":     {"rasi":rahu_r,"longitude":round(rahu_l,2)},
-        "ketu":     {"rasi":ketu_r},
-        "ayanamsa": round(ay,4),
-        "lucky":    lucky,
-        "place":    place,
+
+    # ── Planetary longitudes ────────────────────────────────────────────────
+    if _EPHEM_AVAILABLE:
+        moon_trop = _ephem_longitude(ephem.Moon(), jd)
+        sun_trop  = _ephem_longitude(ephem.Sun(), jd)
+        mars_trop = _ephem_longitude(ephem.Mars(), jd)
+        merc_trop = _ephem_longitude(ephem.Mercury(), jd)
+        jupi_trop = _ephem_longitude(ephem.Jupiter(), jd)
+        venu_trop = _ephem_longitude(ephem.Venus(), jd)
+        satu_trop = _ephem_longitude(ephem.Saturn(), jd)
+    else:
+        moon_trop = _moon_longitude(jd)
+        sun_trop  = _sun_longitude(jd)
+        mars_trop = _planet_lon(jd, "Mars")
+        merc_trop = _planet_lon(jd, "Mercury")
+        jupi_trop = _planet_lon(jd, "Jupiter")
+        venu_trop = _planet_lon(jd, "Venus")
+        satu_trop = _planet_lon(jd, "Saturn")
+
+    moon_sid = _norm(moon_trop - ay)
+    sun_sid  = _norm(sun_trop  - ay)
+
+    moon_rasi = int(moon_sid / 30) + 1
+    sun_rasi  = int(sun_sid  / 30) + 1
+
+    nak_idx  = int(moon_sid / (360 / 27))
+    nak_pada = int((moon_sid % (360 / 27)) / (360 / 108)) + 1
+
+    # ── Lagna (Ascendant) with Local Sidereal Time ──────────────────────────
+    lagna_trop = _calculate_lagna_lst(jd, geo_lat, geo_lon)
+    lagna_sid  = _norm(lagna_trop - ay)
+    lagna_r    = int(lagna_sid / 30) + 1
+
+    # ── Rahu/Ketu (mean nodes) ──────────────────────────────────────────────
+    rahu_l   = _norm(125.0445 - 1934.136 * (jd - J2000) / 36525 - ay)
+    rahu_r   = int(rahu_l / 30) + 1
+    ketu_l   = _norm(rahu_l + 180)
+    ketu_r   = int(ketu_l / 30) + 1
+
+    planets = {
+        "Mars":    {"rasi": int(_norm(mars_trop - ay) / 30) + 1, "longitude": round(_norm(mars_trop - ay), 2)},
+        "Mercury": {"rasi": int(_norm(merc_trop - ay) / 30) + 1, "longitude": round(_norm(merc_trop - ay), 2)},
+        "Jupiter": {"rasi": int(_norm(jupi_trop - ay) / 30) + 1, "longitude": round(_norm(jupi_trop - ay), 2)},
+        "Venus":   {"rasi": int(_norm(venu_trop - ay) / 30) + 1, "longitude": round(_norm(venu_trop - ay), 2)},
+        "Saturn":  {"rasi": int(_norm(satu_trop - ay) / 30) + 1, "longitude": round(_norm(satu_trop - ay), 2)},
     }
+
+    rasi  = RASIS[moon_rasi - 1]
+    nak   = NAKSHATRAS[nak_idx]
+    lucky = LUCKY.get(rasi["englishName"], {})
+
+    # ── Dasha periods ────────────────────────────────────────────────────────
+    dasha_info = calculate_dasha(nak_idx, nak_pada, moon_sid, year, month, day)
+
+    return {
+        "rasi":      {**rasi, "longitude": round(moon_sid, 2)},
+        "nakshatra": {**nak, "index": nak_idx, "pada": nak_pada},
+        "lagna":     {**RASIS[lagna_r - 1], "longitude": round(lagna_sid, 2)},
+        "sun":       {"rasi": sun_rasi, "longitude": round(sun_sid, 2)},
+        "moon":      {"rasi": moon_rasi, "longitude": round(moon_sid, 2)},
+        "mars":      planets["Mars"],
+        "mercury":   planets["Mercury"],
+        "jupiter":   planets["Jupiter"],
+        "venus":      planets["Venus"],
+        "saturn":    planets["Saturn"],
+        "rahu":      {"rasi": rahu_r, "longitude": round(rahu_l, 2)},
+        "ketu":      {"rasi": ketu_r, "longitude": round(ketu_l, 2)},
+        "ayanamsa":  round(ay, 4),
+        "lucky":     lucky,
+        "place":     place,
+        "latitude":  round(geo_lat, 4),
+        "longitude": round(geo_lon, 4),
+        "timezone":  geo_tz,
+        "dasha":     dasha_info,
+        "precision": "ephem" if _EPHEM_AVAILABLE else "approximate",
+    }
+
+
+def _ephem_longitude(body, jd: float) -> float:
+    """Get tropical ecliptic longitude of a body using ephem."""
+    body.compute(ephem.Date(jd - 2415020.0))  # ephem uses Dublin JD
+    return math.degrees(body.hlong) % 360
+
+
+def _calculate_lagna_lst(jd: float, lat: float, lon: float) -> float:
+    """Calculate the Lagna (Ascendant) using Local Sidereal Time.
+    Much more accurate than the sun + time-offset approximation.
+    """
+    if _EPHEM_AVAILABLE:
+        try:
+            obs = ephem.Observer()
+            obs.lat  = str(lat)
+            obs.lon  = str(lon)
+            obs.date = ephem.Date(jd - 2415020.0)
+            # RAMC = Right Ascension of Medium Coeli
+            ramc_deg = math.degrees(float(obs.sidereal_time())) % 360
+            # Convert RAMC to Ascendant using obliquity
+            eps = 23.4392911 - 0.013004167 * (jd - J2000) / 36525
+            ramc_r = math.radians(ramc_deg)
+            eps_r  = math.radians(eps)
+            lat_r  = math.radians(lat)
+            # Ascendant formula
+            y = -math.cos(ramc_r)
+            x = math.sin(eps_r) * math.tan(lat_r) + math.cos(eps_r) * math.sin(ramc_r)
+            asc = math.degrees(math.atan2(y, x)) % 360
+            return asc
+        except Exception as e:
+            logger.warning(f"ephem Lagna calc failed: {e}")
+
+    # Fallback: Local Sidereal Time approximation
+    T  = (jd - J2000) / 36525
+    # Greenwich Mean Sidereal Time (degrees)
+    gmst = 280.46061837 + 360.98564736629 * (jd - J2000) + 0.000387933 * T * T
+    lst  = _norm(gmst + lon)
+    # Crude ascendant from LST (approx equal to RAMC for equatorial regions)
+    return _norm(lst - 90)
+
 
 # ── Nakshatra index reference (0-based) ─────────────────────────────────────
 # 0:Ashwini 1:Bharani 2:Krittika 3:Rohini 4:Mrigashira 5:Ardra 6:Punarvasu
@@ -198,6 +347,127 @@ RASI_NAMES_EN = {
     1:"Mesham",2:"Rishabam",3:"Midhunam",4:"Katakam",5:"Simmam",6:"Kanni",
     7:"Thulam",8:"Viruchigam",9:"Dhanusu",10:"Makaram",11:"Kumbam",12:"Meenam"
 }
+
+# ── Vimshottari Dasha system ───────────────────────────────────────────────
+# Nakshatra lord sequence for Vimshottari Dasha (27 nakshatras, repeating)
+NAK_LORDS = [
+    "Ketu","Venus","Sun","Moon","Mars","Rahu","Jupiter","Saturn","Mercury",  # 0-8
+    "Ketu","Venus","Sun","Moon","Mars","Rahu","Jupiter","Saturn","Mercury",  # 9-17
+    "Ketu","Venus","Sun","Moon","Mars","Rahu","Jupiter","Saturn","Mercury",  # 18-26
+]
+
+# Years for each planet's mahadasha in Vimshottari (total = 120 years)
+DASHA_YEARS = {
+    "Ketu": 7, "Venus": 20, "Sun": 6, "Moon": 10, "Mars": 7,
+    "Rahu": 18, "Jupiter": 16, "Saturn": 19, "Mercury": 17
+}
+
+# Planet sequence for Vimshottari
+DASHA_ORDER = ["Ketu","Venus","Sun","Moon","Mars","Rahu","Jupiter","Saturn","Mercury"]
+
+
+def calculate_dasha(nak_idx: int, nak_pada: int, moon_sid: float,
+                    birth_year: int, birth_month: int, birth_day: int) -> Dict:
+    """Calculate Vimshottari Dasha periods from birth date."""
+    # Each nakshatra spans 360/27 = 13.333° of sidereal zodiac
+    nak_span = 360.0 / 27
+    # Position within the nakshatra (0 to 1)
+    nak_start = nak_idx * nak_span
+    elapsed_in_nak = (moon_sid - nak_start) / nak_span  # 0..1
+
+    lord = NAK_LORDS[nak_idx]
+    dasha_yrs = DASHA_YEARS[lord]
+    # Remaining years in the birth dasha
+    remaining_yrs = dasha_yrs * (1 - elapsed_in_nak)
+
+    # Build dasha sequence starting from birth
+    birth_date = datetime(birth_year, birth_month, birth_day)
+    from datetime import timedelta
+
+    dashas = []
+    current_lord_idx = DASHA_ORDER.index(lord)
+    # First dasha is partially consumed
+    start_dt = birth_date
+    end_dt   = birth_date + timedelta(days=remaining_yrs * 365.25)
+    dashas.append({
+        "planet": lord, "start": start_dt.strftime("%Y-%m-%d"),
+        "end": end_dt.strftime("%Y-%m-%d"),
+        "years": round(remaining_yrs, 2),
+        "current": False
+    })
+
+    # Add subsequent dashas for ~120 years
+    total = remaining_yrs
+    idx   = (current_lord_idx + 1) % 9
+    while total < 120:
+        p    = DASHA_ORDER[idx]
+        yrs  = DASHA_YEARS[p]
+        s_dt = end_dt
+        end_dt = s_dt + timedelta(days=yrs * 365.25)
+        dashas.append({
+            "planet": p, "start": s_dt.strftime("%Y-%m-%d"),
+            "end": end_dt.strftime("%Y-%m-%d"),
+            "years": yrs, "current": False
+        })
+        total += yrs
+        idx   = (idx + 1) % 9
+
+    # Mark current dasha
+    today_str = datetime.now().strftime("%Y-%m-%d")
+    for d in dashas:
+        if d["start"] <= today_str <= d["end"]:
+            d["current"] = True
+            break
+
+    current_dasha = next((d for d in dashas if d["current"]), dashas[0])
+    return {
+        "sequence": dashas[:15],  # next 15 dashas
+        "current":  current_dasha,
+        "birth_lord": lord,
+    }
+
+
+# ── Transit predictions for current date ──────────────────────────────────
+def get_current_transits() -> Dict:
+    """Get current planetary positions (transits) as of today."""
+    now = datetime.utcnow()
+    jd  = _julian_day(now.year, now.month, now.day, now.hour, now.minute)
+    ay  = _ayanamsa(now.year + (now.month - 1) / 12)
+
+    def _pos(trop):
+        sid  = _norm(trop - ay)
+        rasi = int(sid / 30) + 1
+        deg  = sid % 30
+        return {"rasi": rasi, "rasi_name": RASI_NAMES_EN[rasi],
+                "longitude": round(sid, 2), "degree": round(deg, 2)}
+
+    if _EPHEM_AVAILABLE:
+        planets = {
+            "Sun":     _pos(_ephem_longitude(ephem.Sun(), jd)),
+            "Moon":    _pos(_ephem_longitude(ephem.Moon(), jd)),
+            "Mars":    _pos(_ephem_longitude(ephem.Mars(), jd)),
+            "Mercury": _pos(_ephem_longitude(ephem.Mercury(), jd)),
+            "Jupiter": _pos(_ephem_longitude(ephem.Jupiter(), jd)),
+            "Venus":   _pos(_ephem_longitude(ephem.Venus(), jd)),
+            "Saturn":  _pos(_ephem_longitude(ephem.Saturn(), jd)),
+        }
+    else:
+        planets = {
+            "Sun":     _pos(_sun_longitude(jd)),
+            "Moon":    _pos(_moon_longitude(jd)),
+            "Mars":    _pos(_planet_lon(jd, "Mars")),
+            "Mercury": _pos(_planet_lon(jd, "Mercury")),
+            "Jupiter": _pos(_planet_lon(jd, "Jupiter")),
+            "Venus":   _pos(_planet_lon(jd, "Venus")),
+            "Saturn":  _pos(_planet_lon(jd, "Saturn")),
+        }
+
+    rahu_l = _norm(125.0445 - 1934.136 * (jd - J2000) / 36525 - ay)
+    planets["Rahu"] = _pos(rahu_l + ay)  # pass tropical for _pos to subtract ay
+    planets["Ketu"] = _pos(_norm(rahu_l + ay + 180))
+    return {"date": now.strftime("%Y-%m-%d %H:%M UTC"), "planets": planets}
+
+
 FRIENDLY = {
     "Sun":["Moon","Mars","Jupiter"],
     "Moon":["Sun","Mercury"],
